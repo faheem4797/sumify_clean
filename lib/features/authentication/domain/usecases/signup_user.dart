@@ -6,7 +6,6 @@ import 'package:sumify_clean/features/authentication/domain/repositories/auth_re
 
 class SignupUser implements UseCase<User, SignupUserParams> {
   final AuthRepository authRepository;
-
   SignupUser({required this.authRepository});
 
   @override
