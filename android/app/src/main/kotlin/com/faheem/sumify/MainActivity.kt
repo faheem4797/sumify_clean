@@ -1,4 +1,4 @@
-package com.example.sumify_clean
+package com.faheem.sumify
 
 import io.flutter.embedding.android.FlutterActivity
 
