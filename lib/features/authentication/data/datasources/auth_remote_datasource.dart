@@ -7,7 +7,7 @@ import 'package:sumify_clean/features/authentication/data/models/user_model.dart
 abstract interface class AuthRemoteDatasource {
   User? get getCurrentUser;
   Future<String> signupWithEmailAndPassword(
-      {required String name, required String email, required String password});
+      {required String email, required String password});
   Future<String> loginWithEmailAndPassword(
       {required String email, required String password});
   Future<UserModel?> getUserData({required String id});
@@ -69,9 +69,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
   @override
   Future<String> signupWithEmailAndPassword(
-      {required String name,
-      required String email,
-      required String password}) async {
+      {required String email, required String password}) async {
     try {
       final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
