@@ -1,11 +1,11 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
-import 'package:sumify_clean/features/authentication/domain/entities/user.dart';
+import 'package:sumify_clean/features/authentication/domain/entities/app_user.dart';
 
 abstract interface class AuthRepository {
-  Future<Either<Failure, User>> signUpWithEmailAndPassword(
+  Future<Either<Failure, AppUser>> signUpWithEmailAndPassword(
       {required String name, required String email, required String password});
-  Future<Either<Failure, User>> loginWithEmailAndPassword(
+  Future<Either<Failure, AppUser>> loginWithEmailAndPassword(
       {required String email, required String password});
-  Future<Either<Failure, User>> currentUser();
+  Future<Either<Failure, AppUser>> currentUser();
 }

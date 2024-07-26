@@ -1,31 +1,91 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
+import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
 
 abstract interface class AuthRemoteDatasource {
-  Future<UserModel> signupWithEmailAndPassword(
+  User? get getCurrentUser;
+  Future<String> signupWithEmailAndPassword(
       {required String name, required String email, required String password});
-  Future<UserModel> loginWithEmailAndPassword(
+  Future<String> loginWithEmailAndPassword(
       {required String email, required String password});
-  Future<UserModel?> getCurrentUserData();
+  Future<UserModel?> getUserData({required String id});
+  Future<void> setUserData({required UserModel userModel});
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
+  final FirebaseAuth firebaseAuth;
+  final usersCollection = FirebaseFirestore.instance.collection('users');
+
+  AuthRemoteDatasourceImpl({
+    required this.firebaseAuth,
+  });
+
   @override
-  Future<UserModel?> getCurrentUserData() {
-    // TODO: implement getCurrentUserData
-    throw UnimplementedError();
+  Future<UserModel?> getUserData({required String id}) async {
+    try {
+      final userDoc = await usersCollection.doc(id).get();
+
+      if (userDoc.data() != null) {
+        return UserModel.fromMap(userDoc.data()!);
+      } else {
+        throw const FirebaseDataFailure();
+      }
+    } on FirebaseException catch (e) {
+      throw FirebaseDataFailure.fromCode(e.code);
+    } catch (_) {
+      throw const FirebaseDataFailure();
+    }
   }
 
   @override
-  Future<UserModel> loginWithEmailAndPassword(
-      {required String email, required String password}) {
-    // TODO: implement loginWithEmailAndPassword
-    throw UnimplementedError();
+  Future<void> setUserData({required UserModel userModel}) async {
+    try {
+      return await usersCollection.doc(userModel.id).set(userModel.toMap());
+    } on FirebaseException catch (e) {
+      throw FirebaseDataFailure.fromCode(e.code);
+    } catch (_) {
+      throw const FirebaseDataFailure();
+    }
   }
 
   @override
-  Future<UserModel> signupWithEmailAndPassword(
-      {required String name, required String email, required String password}) {
-    // TODO: implement signupWithEmailAndPassword
-    throw UnimplementedError();
+  Future<String> loginWithEmailAndPassword(
+      {required String email, required String password}) async {
+    try {
+      final userCredentials = await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (userCredentials.user == null) {
+        throw const SignInWithEmailAndPasswordFailure('User is null!');
+      }
+      return userCredentials.user!.uid;
+    } on FirebaseAuthException catch (e) {
+      throw SignInWithEmailAndPasswordFailure.fromCode(e.code);
+    } catch (_) {
+      throw const SignInWithEmailAndPasswordFailure();
+    }
   }
+
+  @override
+  Future<String> signupWithEmailAndPassword(
+      {required String name,
+      required String email,
+      required String password}) async {
+    try {
+      final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      if (userCredentials.user == null) {
+        throw const SignUpWithEmailAndPasswordFailure('User is null!');
+      }
+      return userCredentials.user!.uid;
+    } on FirebaseAuthException catch (e) {
+      throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
+    } catch (_) {
+      throw const SignUpWithEmailAndPasswordFailure();
+    }
+  }
+
+  @override
+  User? get getCurrentUser => firebaseAuth.currentUser;
 }

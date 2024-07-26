@@ -1,4 +1,4 @@
-class User {
+class AppUser {
   final String id;
   final String name;
   final String email;
@@ -6,7 +6,7 @@ class User {
   // final bool subscriptionEntitlement;
   // final String subscriptionPlan;
   final String? pictureFilePathFromFirebase;
-  User({
+  AppUser({
     required this.id,
     required this.name,
     required this.email,
