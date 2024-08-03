@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:sumify_clean/routing/app_route_config.dart';
 import 'firebase_options.dart';
+
+//TODO! LEARN GO ROUTER and GET IT
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Sumify',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Scaffold(),
+      routeInformationParser: MyAppRouter().router.routeInformationParser,
+      routerDelegate: MyAppRouter().router.routerDelegate,
+      routeInformationProvider: MyAppRouter().router.routeInformationProvider,
+      // home: const Scaffold(),
     );
   }
 }
