@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sumify_clean/app_bloc_observer.dart';
+import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
+import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sumify_clean/init_dependencies.dart';
 import 'package:sumify_clean/routing/app_route_config.dart';
-import 'firebase_options.dart';
-
-//TODO! LEARN GO ROUTER and GET IT
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
+  Bloc.observer = AppBlocObserver();
+
+  await initDependencies();
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(
+        create: (_) => serviceLocator<AppUserCubit>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<AuthBloc>(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

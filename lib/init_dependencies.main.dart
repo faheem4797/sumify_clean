@@ -7,13 +7,6 @@ Future<void> initDependencies() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // final supabase = await Supabase.initialize(
-  //   url: AppSecrets.supabaseUrl,
-  //   anonKey: AppSecrets.supabaseAnonKey,
-  // );
-  // Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
-  // serviceLocator.registerLazySingleton(() => Hive.box(name: 'blogs'));
-
   serviceLocator.registerLazySingleton(() => firebase);
   serviceLocator
       .registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
@@ -28,7 +21,7 @@ Future<void> initDependencies() async {
   //   ..registerFactory<SignoutRepository>(
   //       () => SignoutRepositoryImpl(serviceLocator(), serviceLocator()))
   //   ..registerFactory(() => UserSignout(serviceLocator()));
-  // serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerFactory<ConnectionChecker>(
       () => ConnectionCheckerImpl(serviceLocator()));
 
@@ -37,20 +30,19 @@ Future<void> initDependencies() async {
 
 Future<void> _initAuth() async {
   serviceLocator
-        ..registerFactory<AuthRemoteDatasource>(
-            () => AuthRemoteDatasourceImpl(firebaseAuth: serviceLocator()))
-        ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
-            connectionChecker: serviceLocator(),
-            authRemoteDatasource: serviceLocator()))
-        ..registerFactory(() => SignupUser(authRepository: serviceLocator()))
-        ..registerFactory(() => LoginUser(authRepository: serviceLocator()))
-        // ..registerFactory(() => ForgotPassword(authRepository: serviceLocator()))
-        ..registerFactory(() => CurrentUser(authRepository: serviceLocator()))
-      // ..registerLazySingleton(() => AuthBloc(
-      //       signupUser: serviceLocator(),
-      //       loginUser: serviceLocator(),
-      //       forgotPassword: serviceLocator(),
-      //       currentUser: serviceLocator(),
-      //     ))
-      ;
+    ..registerFactory<AuthRemoteDatasource>(
+        () => AuthRemoteDatasourceImpl(firebaseAuth: serviceLocator()))
+    ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
+        connectionChecker: serviceLocator(),
+        authRemoteDatasource: serviceLocator()))
+    ..registerFactory(() => SignupUser(authRepository: serviceLocator()))
+    ..registerFactory(() => LoginUser(authRepository: serviceLocator()))
+    ..registerFactory(() => ForgotPassword(authRepository: serviceLocator()))
+    ..registerFactory(() => CurrentUser(authRepository: serviceLocator()))
+    ..registerLazySingleton(() => AuthBloc(
+          signupUser: serviceLocator(),
+          loginUser: serviceLocator(),
+          forgotPassword: serviceLocator(),
+          currentUser: serviceLocator(),
+        ));
 }
