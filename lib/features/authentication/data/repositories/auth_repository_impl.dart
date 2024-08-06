@@ -13,6 +13,22 @@ class AuthRepositoryImpl implements AuthRepository {
 
   AuthRepositoryImpl(
       {required this.authRemoteDatasource, required this.connectionChecker});
+
+  @override
+  Future<Either<Failure, String>> forgotUserPassword(
+      {required String email}) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+      final message =
+          await authRemoteDatasource.forgotUserPassword(email: email);
+      return right(message);
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   @override
   Future<Either<Failure, AppUser>> currentUser() async {
     final user = authRemoteDatasource.getCurrentUser;

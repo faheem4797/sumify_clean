@@ -10,6 +10,8 @@ abstract interface class AuthRemoteDatasource {
       {required String email, required String password});
   Future<String> loginWithEmailAndPassword(
       {required String email, required String password});
+  Future<String> forgotUserPassword({required String email});
+
   Future<UserModel?> getUserData({required String id});
   Future<void> setUserData({required UserModel userModel});
 }
@@ -81,6 +83,19 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
       throw const SignUpWithEmailAndPasswordFailure();
+    }
+  }
+
+  @override
+  Future<String> forgotUserPassword({required String email}) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+
+      return 'Password reset email sent successfully';
+    } on FirebaseAuthException catch (e) {
+      throw SignInWithEmailAndPasswordFailure.fromCode(e.code);
+    } catch (e) {
+      throw const SignInWithEmailAndPasswordFailure();
     }
   }
 
