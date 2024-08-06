@@ -4,7 +4,7 @@ import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
-import 'package:sumify_clean/features/authentication/domain/entities/app_user.dart';
+import 'package:sumify_clean/core/domain/entities/app_user.dart';
 import 'package:sumify_clean/features/authentication/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {

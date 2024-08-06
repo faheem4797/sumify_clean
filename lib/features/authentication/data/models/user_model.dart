@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:sumify_clean/features/authentication/domain/entities/app_user.dart';
+import 'package:sumify_clean/core/domain/entities/app_user.dart';
 
 class UserModel extends AppUser {
   UserModel({
