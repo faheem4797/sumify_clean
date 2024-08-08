@@ -52,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       decoration: const BoxDecoration(
         color: AppPallete.kWhiteColor,
         image: DecorationImage(
-          image: AssetImage("assets/images/login/bg.png"),
+          image: AssetImage(Constants.loginBackgroundImage),
           fit: BoxFit.cover,
         ),
       ),

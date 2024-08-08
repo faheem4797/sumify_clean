@@ -1,6 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:google_fonts/google_fonts.dart';
+// import 'package:sumify_clean/core/constants/constants.dart';
+
 
 // class ForgotPasswordScreen extends StatefulWidget {
 //   const ForgotPasswordScreen({super.key});
@@ -28,7 +30,7 @@
 //         // decoration: BoxDecoration(
 //         //   color: white,
 //         //   image: const DecorationImage(
-//         //     image: AssetImage("assets/images/login/bg.png"),
+//          // image: AssetImage(Constants.splashBackgroundImage),
 //         //     fit: BoxFit.cover,
 //         //   ),
 //         // ),
@@ -43,7 +45,7 @@
 //         decoration: const BoxDecoration(
 //           color: Colors.white,
 //           image: DecorationImage(
-//             image: AssetImage("assets/images/login/bg.png"),
+//           image: AssetImage(Constants.splashBackgroundImage),
 //             fit: BoxFit.cover,
 //           ),
 //         ),

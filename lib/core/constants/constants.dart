@@ -6,4 +6,6 @@ class Constants {
     {"id": 1, "image_path": 'assets/images/splash/group.png'},
     {"id": 2, "image_path": 'assets/images/splash/splash_icon2.png'},
   ];
+  static const loginBackgroundImage = "assets/images/login/bg.png";
+  static const splashBackgroundImage = "assets/images/splash/splash_bg.png";
 }

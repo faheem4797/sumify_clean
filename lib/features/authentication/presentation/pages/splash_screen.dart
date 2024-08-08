@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
         decoration: const BoxDecoration(
           color: AppPallete.kWhiteColor,
           image: DecorationImage(
-            image: AssetImage("assets/images/splash/splash_bg.png"),
+            image: AssetImage(Constants.splashBackgroundImage),
             fit: BoxFit.cover,
           ),
         ),
