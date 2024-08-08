@@ -83,6 +83,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 50.h),
+
+                  //
+                  //
+                  //
+                  //
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //SizedBox(height: 10.h),
+                        TextFormField(
+                          controller: controller,
+                          obscureText: pwdField == 1
+                              ? obscure
+                              : pwdField == 2
+                                  ? obscureConfirm
+                                  : false,
+                          keyboardType: keyboardType,
+                          validator: validator,
+                          decoration: InputDecoration(
+                              hintText: hintText,
+                              labelText: labelText,
+                              suffixIcon: pwdField == 0
+                                  ? null
+                                  : pwdField == 1
+                                      ? IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              obscure = !obscure;
+                                            });
+                                          },
+                                          icon: Icon(obscure
+                                              ? Icons.visibility
+                                              : Icons.visibility_off))
+                                      : IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              obscureConfirm = !obscureConfirm;
+                                            });
+                                          },
+                                          icon: Icon(obscureConfirm
+                                              ? Icons.visibility
+                                              : Icons.visibility_off))),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
                   signupTextField(
                     _nameController,
                     'Full Name',
@@ -292,7 +349,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       String labelText,
       String hintText,
       TextInputType keyboardType,
-      int pwdField,
+      int? pwdField,
       String? Function(String?)? validator) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -302,11 +359,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           //SizedBox(height: 10.h),
           TextFormField(
             controller: controller,
-            obscureText: pwdField == 0
-                ? false
-                : pwdField == 1
-                    ? obscure
-                    : obscureConfirm,
+            obscureText: pwdField == 1
+                ? obscure
+                : pwdField == 2
+                    ? obscureConfirm
+                    : false,
             keyboardType: keyboardType,
             validator: validator,
             decoration: InputDecoration(
@@ -330,7 +387,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 obscureConfirm = !obscureConfirm;
                               });
                             },
-                            icon: Icon(obscure
+                            icon: Icon(obscureConfirm
                                 ? Icons.visibility
                                 : Icons.visibility_off))),
           )
