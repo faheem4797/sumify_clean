@@ -33,6 +33,7 @@ dependencies:
   cloud_firestore: ^5.1.0
   cupertino_icons: ^1.0.6
   dotted_border: ^2.1.0
+  equatable: ^2.0.5
   external_path: ^1.0.3
   firebase_auth: ^5.1.2
   firebase_core: ^3.2.0
@@ -42,6 +43,8 @@ dependencies:
   flutter_bloc: ^8.1.6
   flutter_screenutil: ^5.9.3
   fpdart: ^1.1.0
+  get_it: ^7.7.0
+  go_router: ^14.2.2
   google_fonts: ^6.2.1
   http: ^1.2.2
   image_picker: ^1.1.2
@@ -50,19 +53,15 @@ dependencies:
   permission_handler: ^11.3.1
   syncfusion_flutter_pdf: ^26.2.4
   url_launcher: ^6.3.0
-  go_router: ^14.2.2
-  get_it: ^7.7.0
-
 
 dev_dependencies:
+  change_app_package_name: ^1.3.0
+
+  device_preview: ^1.1.0
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^3.0.0
   flutter_test:
     sdk: flutter
-  
-  device_preview: ^1.1.0
-  change_app_package_name: ^1.3.0
-  flutter_launcher_icons: "^0.13.1"
-
 
 flutter_launcher_icons:
 

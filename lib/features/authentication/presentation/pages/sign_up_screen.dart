@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
+import 'package:sumify_clean/core/theme/app_pallete.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -24,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool obscureConfirm = true;
 
   Future<void> _launchURL() async {
-    final uri = Uri.parse(privacyPolicyURL);
+    final uri = Uri.parse(Constants.privacyPolicyURL);
     if (!await launchUrl(
       uri,
       mode: LaunchMode.externalApplication,
@@ -47,9 +49,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: white,
-        image: const DecorationImage(
+      decoration: const BoxDecoration(
+        color: AppPallete.kWhiteColor,
+        image: DecorationImage(
           image: AssetImage("assets/images/login/bg.png"),
           fit: BoxFit.cover,
         ),
@@ -75,11 +77,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 50.h),
                   Text(
                     'Create your Account',
-                    style: GoogleFonts.nunito(
-                        textStyle: TextStyle(
-                            color: lightTeal,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: AppPallete.klightTealColor,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 50.h),
                   signupTextField(
@@ -96,6 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                     },
                   ),
+                  SizedBox(height: 10.h),
                   signupTextField(
                     _emailController,
                     'Email Address',
@@ -114,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                     },
                   ),
-                  //SizedBox(height: 16.h),
+                  SizedBox(height: 10.h),
                   signupTextField(
                     _passwordController,
                     'Password',
@@ -131,6 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                     },
                   ),
+                  SizedBox(height: 10.h),
                   signupTextField(
                     _confirmPasswordController,
                     'Confirm Password',
@@ -167,8 +170,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           TextSpan(
                               style: GoogleFonts.outfit(
-                                  textStyle: TextStyle(
-                                color: darkTeal,
+                                  textStyle: const TextStyle(
+                                color: AppPallete.kDarkTealColor,
                                 fontSize: 15,
                               )),
                               text: 'Privacy Policy',
@@ -185,7 +188,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(height: 10.h),
-
                   signupButton(),
                   SizedBox(height: 30.h),
                   Row(
@@ -200,17 +202,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) => const Login()));
+                          // Navigator.of(context).pushReplacement(
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const Login()));
                         },
                         child: Text(
                           'Login',
-                          style: GoogleFonts.nunito(
-                              textStyle: TextStyle(
-                                  color: darkTeal,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500)),
+                          style: TextStyle(
+                              color: AppPallete.kDarkTealColor,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500),
                         ),
                       )
                     ],
@@ -225,7 +226,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   SizedBox signupButton() {
-    final userProvider = Provider.of<UserProvider>(context);
     return SizedBox(
       width: double.maxFinite,
       height: 45.h,
@@ -241,49 +241,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     setState(() {
                       isLoading = true;
                     });
-                    String? message = await AuthService().registration(
-                        name: _nameController.text,
-                        email: _emailController.text,
-                        password: _passwordController.text);
+                    // String? message = await AuthService().registration(
+                    //     name: _nameController.text,
+                    //     email: _emailController.text,
+                    //     password: _passwordController.text);
 
-                    if (message!.contains('Success')) {
-                      await userProvider.setUser();
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (!mounted) return;
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const MainPage()));
-                    }
-                    setState(() {
-                      isLoading = false;
-                    });
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                      ),
-                    );
+                    // if (message!.contains('Success')) {
+                    //   await userProvider.setUser();
+                    //   setState(() {
+                    //     isLoading = false;
+                    //   });
+                    //   if (!mounted) return;
+                    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    //       builder: (context) => const MainPage()));
+                    // }
+                    // setState(() {
+                    //   isLoading = false;
+                    // });
+                    // if (!mounted) return;
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   SnackBar(
+                    //     content: Text(message),
+                    //   ),
+                    // );
                   }
                 },
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.r),
             ),
-            backgroundColor: darkTeal,
+            backgroundColor: AppPallete.kDarkTealColor,
           ),
           child: isLoading
-              ? CircularProgressIndicator(
-                  color: white,
+              ? const CircularProgressIndicator(
+                  color: AppPallete.kWhiteColor,
                 )
               : Text(
                   'SIGN UP',
-                  style: GoogleFonts.nunito(
-                      textStyle: TextStyle(
+                  style: TextStyle(
                     fontSize: 22.sp,
                     fontWeight: FontWeight.normal,
-                    color: kColorText,
-                  )),
+                    color: AppPallete.kWhiteColor,
+                  ),
                 )),
     );
   }
@@ -303,7 +302,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           //SizedBox(height: 10.h),
           TextFormField(
             controller: controller,
-            style: GoogleFonts.nunito(),
             obscureText: pwdField == 0
                 ? false
                 : pwdField == 1
@@ -312,19 +310,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             keyboardType: keyboardType,
             validator: validator,
             decoration: InputDecoration(
-                floatingLabelBehavior: FloatingLabelBehavior.never,
                 hintText: hintText,
                 labelText: labelText,
-                suffixIconColor: Colors.grey,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: darkTeal),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: darkTeal),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: darkTeal, width: 2),
-                ),
                 suffixIcon: pwdField == 0
                     ? null
                     : pwdField == 1

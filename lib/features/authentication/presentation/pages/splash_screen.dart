@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
+import 'package:sumify_clean/core/theme/app_pallete.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,9 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          //TODO: Remove Colors.
-          //TODO: ADD GOOGLEFONTS.NUNITO as text theme
-          color: Colors.white,
+          color: AppPallete.kWhiteColor,
           image: DecorationImage(
             image: AssetImage("assets/images/splash/splash_bg.png"),
             fit: BoxFit.cover,
@@ -37,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   'Welcome to',
                   style: GoogleFonts.poppins(
                       textStyle: TextStyle(
-                          color: const Color(0xff4E4E4E), fontSize: 16.sp)),
+                          color: AppPallete.kDarkerTealColor, fontSize: 16.sp)),
                 ),
                 Text(
                   'Sumify',
@@ -84,8 +83,8 @@ class _SplashScreenState extends State<SplashScreen> {
                             shape: BoxShape.circle,
                             color:
                                 (Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black)
+                                        ? AppPallete.kWhiteColor
+                                        : AppPallete.kBlackColor)
                                     .withOpacity(
                                         currentIndex == entry.key ? 0.9 : 0.4)),
                       ),
@@ -102,7 +101,6 @@ class _SplashScreenState extends State<SplashScreen> {
               turns: const AlwaysStoppedAnimation(45 / 360),
               child: Container(
                 decoration: BoxDecoration(
-                  //color: Colors.pink,
                   border: Border.all(width: 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(87.r),
@@ -123,11 +121,13 @@ class _SplashScreenState extends State<SplashScreen> {
                   currentIndex == 0
                       ? carouselController.animateToPage(1)
                       : Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const Login()));
+                          builder: (context) => const Scaffold()
+                          //const Login()
+                          ));
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                      color: const Color(0xff0B7282),
+                      color: AppPallete.kDarkTealColor,
                       borderRadius: BorderRadius.all(Radius.circular(80.r))),
                   height: 230.h,
                   width: 230.w,
@@ -143,12 +143,13 @@ class _SplashScreenState extends State<SplashScreen> {
                                   'Next  ',
                                   style: GoogleFonts.poppins(
                                     textStyle: TextStyle(
-                                        color: Colors.white, fontSize: 22.sp),
+                                        color: AppPallete.kWhiteColor,
+                                        fontSize: 22.sp),
                                   ),
                                 ),
                                 const Icon(
                                   Icons.arrow_forward,
-                                  color: Colors.white,
+                                  color: AppPallete.kWhiteColor,
                                 )
                               ],
                             ),
