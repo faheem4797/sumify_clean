@@ -1,166 +1,115 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:sumify_clean/core/constants/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sumify_clean/core/common/form_inputs/email.dart';
+import 'package:sumify_clean/core/common/widgets/loader.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
+import 'package:sumify_clean/core/theme/app_pallete.dart';
+import 'package:sumify_clean/core/utils/show_snackbar.dart';
+import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sumify_clean/features/authentication/presentation/blocs/forgot_password_bloc/forgot_password_bloc.dart';
+import 'package:sumify_clean/features/authentication/presentation/widgets/auth_button.dart';
 
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
-// class ForgotPasswordScreen extends StatefulWidget {
-//   const ForgotPasswordScreen({super.key});
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
 
-//   @override
-//   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
-// }
-
-// class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-//   final TextEditingController _emailController = TextEditingController();
-//   final formKey = GlobalKey<FormState>();
-//   bool isLoading = false;
-
-//   @override
-//   void dispose() {
-//     _emailController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return
-//         // width: double.infinity,
-//         // height: double.infinity,
-//         // decoration: BoxDecoration(
-//         //   color: white,
-//         //   image: const DecorationImage(
-//          // image: AssetImage(Constants.splashBackgroundImage),
-//         //     fit: BoxFit.cover,
-//         //   ),
-//         // ),
-//         Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: lightTeal,
-//       ),
-//       backgroundColor: Colors.transparent,
-//       body: Container(
-//         width: double.infinity,
-//         height: double.infinity,
-//         decoration: const BoxDecoration(
-//           color: Colors.white,
-//           image: DecorationImage(
-//           image: AssetImage(Constants.splashBackgroundImage),
-//             fit: BoxFit.cover,
-//           ),
-//         ),
-//         child: SingleChildScrollView(
-//           child: Form(
-//             key: formKey,
-//             child: Padding(
-//               padding: EdgeInsets.symmetric(horizontal: 25.w),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   SizedBox(height: 230.h),
-//                   TextFormField(
-//                     controller: _emailController,
-//                     style: GoogleFonts.nunito(),
-//                     keyboardType: TextInputType.emailAddress,
-//                     validator: (value) {
-//                       if (_emailController.text == '') {
-//                         return 'Please enter an email';
-//                       } else if (!RegExp(
-//                               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-//                           .hasMatch(_emailController.text)) {
-//                         return 'Please enter a valid email';
-//                       } else {
-//                         return null;
-//                       }
-//                     },
-//                     decoration: InputDecoration(
-//                       floatingLabelBehavior: FloatingLabelBehavior.never,
-//                       hintText: 'Please enter your email address',
-//                       labelText: 'Email Address',
-//                       suffixIconColor: Colors.grey,
-//                       enabledBorder: UnderlineInputBorder(
-//                         borderSide: BorderSide(color: darkTeal),
-//                       ),
-//                       border: UnderlineInputBorder(
-//                         borderSide: BorderSide(color: darkTeal),
-//                       ),
-//                       focusedBorder: UnderlineInputBorder(
-//                         borderSide: BorderSide(color: darkTeal, width: 2),
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(height: 25.h),
-//                   SizedBox(
-//                     width: double.maxFinite,
-//                     height: 45.h,
-//                     child: ElevatedButton(
-//                         onPressed: isLoading
-//                             ? null
-//                             : () async {
-//                                 FocusScope.of(context).unfocus();
-//                                 final isValid =
-//                                     formKey.currentState?.validate();
-//                                 if (isValid == true) {
-//                                   formKey.currentState?.save();
-
-//                                   setState(() {
-//                                     isLoading = true;
-//                                   });
-//                                   String? message =
-//                                       await AuthService().resetPassword(
-//                                     email: _emailController.text,
-//                                   );
-//                                   setState(() {
-//                                     isLoading = false;
-//                                   });
-
-//                                   if (message!.contains('Success')) {
-//                                     if (!context.mounted) return;
-//                                     ScaffoldMessenger.of(context).showSnackBar(
-//                                       const SnackBar(
-//                                         content:
-//                                             Text('Password Reset Email Sent'),
-//                                       ),
-//                                     );
-//                                     Navigator.pop(context);
-//                                     // Navigator.of(context).pushReplacement(
-//                                     //     MaterialPageRoute(
-//                                     //         builder: (context) =>
-//                                     //             const MyWidget()));
-//                                   } else {
-//                                     if (!context.mounted) return;
-//                                     ScaffoldMessenger.of(context).showSnackBar(
-//                                       SnackBar(
-//                                         content: Text(message),
-//                                       ),
-//                                     );
-//                                   }
-//                                 }
-//                               },
-//                         style: ElevatedButton.styleFrom(
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(20.r),
-//                           ),
-//                           backgroundColor: darkTeal,
-//                         ),
-//                         child: isLoading
-//                             ? CircularProgressIndicator(
-//                                 color: white,
-//                               )
-//                             : Text(
-//                                 'Reset Password',
-//                                 style: GoogleFonts.nunito(
-//                                     textStyle: TextStyle(
-//                                         fontSize: 22.sp,
-//                                         fontWeight: FontWeight.normal)),
-//                               )),
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Reset Password',
+          style: TextStyle(color: AppPallete.kWhiteColor),
+        ),
+        centerTitle: true,
+        backgroundColor: AppPallete.klightTealColor,
+      ),
+      backgroundColor: Colors.transparent,
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthFailure) {
+            showSnackBar(context, state.message);
+          } else if (state is AuthInitial && state.message != null) {
+            showSnackBar(context, state.message!);
+            Future.delayed(const Duration(seconds: 2), () {
+              Navigator.pop(context);
+            });
+          }
+        },
+        builder: (context, state) {
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              color: AppPallete.kWhiteColor,
+              image: DecorationImage(
+                image: AssetImage(Constants.splashBackgroundImage),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: state is AuthLoading
+                ? const Loader()
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 230.h),
+                          BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+                            buildWhen: (previous, current) =>
+                                previous.email != current.email,
+                            builder: (context, state) {
+                              return TextField(
+                                onChanged: (email) => context
+                                    .read<ForgotPasswordBloc>()
+                                    .add(ForgotPasswordEmailChanged(
+                                        email: email)),
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  labelText: Constants.emailFieldLabelText,
+                                  hintText: Constants.emailFieldHintText,
+                                  errorText: state.email.displayError ==
+                                          EmailValidationError.empty
+                                      ? Constants.emailFieldEmptyErrorText
+                                      : state.email.displayError ==
+                                              EmailValidationError.invalid
+                                          ? Constants.emailFieldInvalidErrorText
+                                          : null,
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 25.h),
+                          AuthButton(
+                              buttonText: 'Reset Password',
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                context
+                                    .read<ForgotPasswordBloc>()
+                                    .add(ForgotPasswordButtonPressed());
+                                final forgotPasswordState =
+                                    context.read<ForgotPasswordBloc>().state;
+                                if (forgotPasswordState.isValid) {
+                                  context
+                                      .read<AuthBloc>()
+                                      .add(AuthForgotPassword(
+                                        email: forgotPasswordState.email.value,
+                                      ));
+                                }
+                              }),
+                        ],
+                      ),
+                    ),
+                  ),
+          );
+        },
+      ),
+    );
+  }
+}

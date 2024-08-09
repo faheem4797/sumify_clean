@@ -5,6 +5,7 @@ import 'package:sumify_clean/app_bloc_observer.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/core/theme/theme.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sumify_clean/features/authentication/presentation/blocs/forgot_password_bloc/forgot_password_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:sumify_clean/init_dependencies.dart';
@@ -29,7 +30,8 @@ void main() async {
             create: (_) => serviceLocator<AuthBloc>(),
           ),
           BlocProvider(create: (_) => serviceLocator<SignUpBloc>()),
-          BlocProvider(create: (_) => serviceLocator<SignInBloc>())
+          BlocProvider(create: (_) => serviceLocator<SignInBloc>()),
+          BlocProvider(create: (_) => serviceLocator<ForgotPasswordBloc>())
         ],
         child: const MyApp(),
       ),

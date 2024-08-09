@@ -74,17 +74,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   color: AppPallete.klightTealColor,
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold)),
-
                           SizedBox(height: 30.h),
-
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
                           BlocBuilder<SignInBloc, SignInState>(
                             buildWhen: (previous, current) =>
                                 previous.email != current.email,
@@ -145,19 +135,6 @@ class _SignInScreenState extends State<SignInScreen> {
                               );
                             },
                           ),
-
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
-                          ///
                           SizedBox(height: 20.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -188,12 +165,12 @@ class _SignInScreenState extends State<SignInScreen> {
                               context
                                   .read<SignInBloc>()
                                   .add(SignInButtonPressed());
-                              final signUpState =
+                              final signInState =
                                   context.read<SignInBloc>().state;
-                              if (signUpState.isValid) {
+                              if (signInState.isValid) {
                                 context.read<AuthBloc>().add(AuthLogin(
-                                    email: signUpState.email.value,
-                                    password: signUpState.password.value));
+                                    email: signInState.email.value,
+                                    password: signInState.password.value));
                               }
                             },
                           ),
