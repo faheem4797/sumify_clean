@@ -13,6 +13,7 @@ import 'package:sumify_clean/core/theme/app_pallete.dart';
 import 'package:sumify_clean/core/utils/show_snackbar.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
+import 'package:sumify_clean/features/authentication/presentation/widgets/auth_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         } else if (state is AuthSuccess) {
           context.read<AppUserCubit>().updateUser(state.user);
           showSnackBar(context, 'Success');
+          //TODO: ADD THIS IN ROUTER FILE
 
           // Navigator.pushAndRemoveUntil(
           //     context,
@@ -103,11 +105,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           fullName: fullName)),
                                   keyboardType: TextInputType.name,
                                   decoration: InputDecoration(
-                                    labelText: 'Full Name',
-                                    hintText: 'Enter your name',
+                                    labelText: Constants.nameFieldLabelText,
+                                    hintText: Constants.nameFieldHintText,
                                     errorText:
                                         state.fullName.displayError != null
-                                            ? 'Please enter your name'
+                                            ? Constants.nameFieldErrorText
                                             : null,
                                   ),
                                 );
@@ -124,14 +126,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       .add(SignUpEmailChanged(email: email)),
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
-                                    labelText: 'Email Address',
-                                    hintText: 'Enter your email',
+                                    labelText: Constants.emailFieldLabelText,
+                                    hintText: Constants.emailFieldHintText,
                                     errorText: state.email.displayError ==
                                             EmailValidationError.empty
-                                        ? 'Please enter an email'
+                                        ? Constants.emailFieldEmptyErrorText
                                         : state.email.displayError ==
                                                 EmailValidationError.invalid
-                                            ? 'Please enter a valid email'
+                                            ? Constants
+                                                .emailFieldInvalidErrorText
                                             : null,
                                   ),
                                 );
@@ -152,14 +155,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   keyboardType: TextInputType.name,
                                   obscureText: state.passwordObscured,
                                   decoration: InputDecoration(
-                                    labelText: 'Password',
-                                    hintText: 'Enter your password',
+                                    labelText: Constants.passwordFieldLabelText,
+                                    hintText: Constants.passwordFieldHintText,
                                     errorText: state.password.displayError ==
                                             PasswordValidationError.empty
-                                        ? 'Please enter a password'
+                                        ? Constants.passwordFieldEmptyErrorText
                                         : state.password.displayError ==
                                                 PasswordValidationError.short
-                                            ? 'Password must be atleast 8 characters long'
+                                            ? Constants
+                                                .passwordFieldShortErrorText
                                             : null,
                                     suffixIcon: IconButton(
                                         onPressed: () {
@@ -189,17 +193,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   keyboardType: TextInputType.name,
                                   obscureText: state.confirmPasswordObscured,
                                   decoration: InputDecoration(
-                                    labelText: 'Confirm Password',
-                                    hintText: 'Confirm your password',
+                                    labelText:
+                                        Constants.confirmPasswordFieldLabelText,
+                                    hintText:
+                                        Constants.confirmPasswordFieldHintText,
                                     errorText: state
                                                 .confirmPassword.displayError ==
                                             ConfirmPasswordValidationError
                                                 .invalid
-                                        ? 'Passwords did not match'
+                                        ? Constants
+                                            .confirmPasswordFieldInvalidErrorText
                                         : state.confirmPassword.displayError ==
                                                 ConfirmPasswordValidationError
                                                     .empty
-                                            ? 'Please enter a password'
+                                            ? Constants
+                                                .confirmPasswordFieldEmptyErrorText
                                             : null,
                                     suffixIcon: IconButton(
                                         onPressed: () {
@@ -249,7 +257,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                             SizedBox(height: 10.h),
-                            signupButton(),
+                            AuthButton(
+                              buttonText: 'SIGN UP',
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                context
+                                    .read<SignUpBloc>()
+                                    .add(SignUpButtonPressed());
+                                final signUpState =
+                                    context.read<SignUpBloc>().state;
+                                if (signUpState.isValid) {
+                                  context.read<AuthBloc>().add(AuthSignUp(
+                                      name: signUpState.fullName.value,
+                                      email: signUpState.email.value,
+                                      password: signUpState.password.value));
+                                }
+                              },
+                            ),
                             SizedBox(height: 30.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -263,6 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
+                                    //TODO: ADD THIS IN ROUTER FILE
                                     // Navigator.of(context).pushReplacement(
                                     //     MaterialPageRoute(
                                     //         builder: (context) => const Login()));
@@ -285,47 +310,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               );
       },
-    );
-  }
-
-  SizedBox signupButton() {
-    return SizedBox(
-      width: double.maxFinite,
-      height: 45.h,
-      child: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          return ElevatedButton(
-              onPressed: () async {
-                FocusScope.of(context).unfocus();
-                context.read<SignUpBloc>().add(SignUpButtonPressed());
-                final signUpState = context.read<SignUpBloc>().state;
-                if (signUpState.isValid) {
-                  print(true);
-                  print(signUpState);
-                  // print(signUpState);
-
-                  context.read<AuthBloc>().add(AuthSignUp(
-                      name: signUpState.fullName.value,
-                      email: signUpState.email.value,
-                      password: signUpState.password.value));
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                backgroundColor: AppPallete.kDarkTealColor,
-              ),
-              child: Text(
-                'SIGN UP',
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.normal,
-                  color: AppPallete.kWhiteColor,
-                ),
-              ));
-        },
-      ),
     );
   }
 }

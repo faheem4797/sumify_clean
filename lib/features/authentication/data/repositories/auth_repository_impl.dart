@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
+import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
@@ -25,6 +26,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final message =
           await authRemoteDatasource.forgotUserPassword(email: email);
       return right(message);
+    } on SignInWithEmailAndPasswordFailure catch (e) {
+      return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
     }
@@ -68,6 +71,8 @@ class AuthRepositoryImpl implements AuthRepository {
       } else {
         return right(userModel);
       }
+    } on SignInWithEmailAndPasswordFailure catch (e) {
+      return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
     }
@@ -93,7 +98,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return right(userModel);
     } on SignUpWithEmailAndPasswordFailure catch (e) {
-      print(e);
+      return left(Failure(e.message));
+    } on FirebaseDataFailure catch (e) {
       return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
