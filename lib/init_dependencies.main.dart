@@ -45,5 +45,6 @@ Future<void> _initAuth() async {
           forgotPassword: serviceLocator(),
           currentUser: serviceLocator(),
         ))
-    ..registerLazySingleton(() => SignUpBloc());
+    ..registerLazySingleton(() => SignUpBloc())
+    ..registerLazySingleton(() => SignInBloc());
 }

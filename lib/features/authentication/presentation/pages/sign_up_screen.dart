@@ -24,8 +24,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final formKey = GlobalKey<FormState>();
-
   Future<void> _launchURL() async {
     final uri = Uri.parse(Constants.privacyPolicyURL);
     if (!await launchUrl(
@@ -69,241 +67,234 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
                   body: SingleChildScrollView(
-                    child: Form(
-                      key: formKey,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25.w),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 120.h),
-                            Text(
-                              'Sumify',
-                              style: GoogleFonts.poppins(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 40.sp)),
-                            ),
-                            SizedBox(height: 30.h),
-                            Text(
-                              'Create your Account',
-                              style: TextStyle(
-                                  color: AppPallete.klightTealColor,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 30.h),
-                            BlocBuilder<SignUpBloc, SignUpState>(
-                              buildWhen: (previous, current) =>
-                                  previous.fullName != current.fullName,
-                              builder: (context, state) {
-                                return TextField(
-                                  onChanged: (fullName) => context
-                                      .read<SignUpBloc>()
-                                      .add(SignUpFullNameChanged(
-                                          fullName: fullName)),
-                                  keyboardType: TextInputType.name,
-                                  decoration: InputDecoration(
-                                    labelText: Constants.nameFieldLabelText,
-                                    hintText: Constants.nameFieldHintText,
-                                    errorText:
-                                        state.fullName.displayError != null
-                                            ? Constants.nameFieldErrorText
-                                            : null,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 120.h),
+                          Text(
+                            'Sumify',
+                            style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 40.sp)),
+                          ),
+                          SizedBox(height: 30.h),
+                          Text(
+                            'Create your Account',
+                            style: TextStyle(
+                                color: AppPallete.klightTealColor,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 30.h),
+                          BlocBuilder<SignUpBloc, SignUpState>(
+                            buildWhen: (previous, current) =>
+                                previous.fullName != current.fullName,
+                            builder: (context, state) {
+                              return TextField(
+                                onChanged: (fullName) => context
+                                    .read<SignUpBloc>()
+                                    .add(SignUpFullNameChanged(
+                                        fullName: fullName)),
+                                keyboardType: TextInputType.name,
+                                decoration: InputDecoration(
+                                  labelText: Constants.nameFieldLabelText,
+                                  hintText: Constants.nameFieldHintText,
+                                  errorText: state.fullName.displayError != null
+                                      ? Constants.nameFieldErrorText
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 10.h),
+                          BlocBuilder<SignUpBloc, SignUpState>(
+                            buildWhen: (previous, current) =>
+                                previous.email != current.email,
+                            builder: (context, state) {
+                              return TextField(
+                                onChanged: (email) => context
+                                    .read<SignUpBloc>()
+                                    .add(SignUpEmailChanged(email: email)),
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  labelText: Constants.emailFieldLabelText,
+                                  hintText: Constants.emailFieldHintText,
+                                  errorText: state.email.displayError ==
+                                          EmailValidationError.empty
+                                      ? Constants.emailFieldEmptyErrorText
+                                      : state.email.displayError ==
+                                              EmailValidationError.invalid
+                                          ? Constants.emailFieldInvalidErrorText
+                                          : null,
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 10.h),
+                          BlocBuilder<SignUpBloc, SignUpState>(
+                            buildWhen: (previous, current) =>
+                                (previous.password != current.password) ||
+                                (previous.passwordObscured !=
+                                    current.passwordObscured),
+                            builder: (context, state) {
+                              return TextField(
+                                onChanged: (password) => context
+                                    .read<SignUpBloc>()
+                                    .add(SignUpPasswordChanged(
+                                        password: password)),
+                                keyboardType: TextInputType.name,
+                                obscureText: state.passwordObscured,
+                                decoration: InputDecoration(
+                                  labelText: Constants.passwordFieldLabelText,
+                                  hintText: Constants.passwordFieldHintText,
+                                  errorText: state.password.displayError ==
+                                          PasswordValidationError.empty
+                                      ? Constants.passwordFieldEmptyErrorText
+                                      : state.password.displayError ==
+                                              PasswordValidationError.short
+                                          ? Constants
+                                              .passwordFieldShortErrorText
+                                          : null,
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        context.read<SignUpBloc>().add(
+                                            SignUpPasswordObscurePressed());
+                                      },
+                                      icon: Icon(state.passwordObscured
+                                          ? Icons.visibility
+                                          : Icons.visibility_off)),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 10.h),
+                          BlocBuilder<SignUpBloc, SignUpState>(
+                            buildWhen: (previous, current) =>
+                                (previous.confirmPassword !=
+                                    current.confirmPassword) ||
+                                (previous.confirmPasswordObscured !=
+                                    current.confirmPasswordObscured),
+                            builder: (context, state) {
+                              return TextField(
+                                onChanged: (confirmPassword) => context
+                                    .read<SignUpBloc>()
+                                    .add(SignUpConfirmPasswordChanged(
+                                        confirmPassword: confirmPassword)),
+                                keyboardType: TextInputType.name,
+                                obscureText: state.confirmPasswordObscured,
+                                decoration: InputDecoration(
+                                  labelText:
+                                      Constants.confirmPasswordFieldLabelText,
+                                  hintText:
+                                      Constants.confirmPasswordFieldHintText,
+                                  errorText: state
+                                              .confirmPassword.displayError ==
+                                          ConfirmPasswordValidationError.invalid
+                                      ? Constants
+                                          .confirmPasswordFieldInvalidErrorText
+                                      : state.confirmPassword.displayError ==
+                                              ConfirmPasswordValidationError
+                                                  .empty
+                                          ? Constants
+                                              .confirmPasswordFieldEmptyErrorText
+                                          : null,
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        context.read<SignUpBloc>().add(
+                                            SignUpConfirmPasswordObscurePressed());
+                                      },
+                                      icon: Icon(state.confirmPasswordObscured
+                                          ? Icons.visibility
+                                          : Icons.visibility_off)),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 30.h),
+                          Center(
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text:
+                                        'By clicking SIGN UP, you agree to and have read our ',
+                                    style: GoogleFonts.outfit(
+                                        textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    )),
                                   ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 10.h),
-                            BlocBuilder<SignUpBloc, SignUpState>(
-                              buildWhen: (previous, current) =>
-                                  previous.email != current.email,
-                              builder: (context, state) {
-                                return TextField(
-                                  onChanged: (email) => context
-                                      .read<SignUpBloc>()
-                                      .add(SignUpEmailChanged(email: email)),
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    labelText: Constants.emailFieldLabelText,
-                                    hintText: Constants.emailFieldHintText,
-                                    errorText: state.email.displayError ==
-                                            EmailValidationError.empty
-                                        ? Constants.emailFieldEmptyErrorText
-                                        : state.email.displayError ==
-                                                EmailValidationError.invalid
-                                            ? Constants
-                                                .emailFieldInvalidErrorText
-                                            : null,
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 10.h),
-                            BlocBuilder<SignUpBloc, SignUpState>(
-                              buildWhen: (previous, current) =>
-                                  (previous.password != current.password) ||
-                                  (previous.passwordObscured !=
-                                      current.passwordObscured),
-                              builder: (context, state) {
-                                return TextField(
-                                  onChanged: (password) => context
-                                      .read<SignUpBloc>()
-                                      .add(SignUpPasswordChanged(
-                                          password: password)),
-                                  keyboardType: TextInputType.name,
-                                  obscureText: state.passwordObscured,
-                                  decoration: InputDecoration(
-                                    labelText: Constants.passwordFieldLabelText,
-                                    hintText: Constants.passwordFieldHintText,
-                                    errorText: state.password.displayError ==
-                                            PasswordValidationError.empty
-                                        ? Constants.passwordFieldEmptyErrorText
-                                        : state.password.displayError ==
-                                                PasswordValidationError.short
-                                            ? Constants
-                                                .passwordFieldShortErrorText
-                                            : null,
-                                    suffixIcon: IconButton(
-                                        onPressed: () {
-                                          context.read<SignUpBloc>().add(
-                                              SignUpPasswordObscurePressed());
-                                        },
-                                        icon: Icon(state.passwordObscured
-                                            ? Icons.visibility
-                                            : Icons.visibility_off)),
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 10.h),
-                            BlocBuilder<SignUpBloc, SignUpState>(
-                              buildWhen: (previous, current) =>
-                                  (previous.confirmPassword !=
-                                      current.confirmPassword) ||
-                                  (previous.confirmPasswordObscured !=
-                                      current.confirmPasswordObscured),
-                              builder: (context, state) {
-                                return TextField(
-                                  onChanged: (confirmPassword) => context
-                                      .read<SignUpBloc>()
-                                      .add(SignUpConfirmPasswordChanged(
-                                          confirmPassword: confirmPassword)),
-                                  keyboardType: TextInputType.name,
-                                  obscureText: state.confirmPasswordObscured,
-                                  decoration: InputDecoration(
-                                    labelText:
-                                        Constants.confirmPasswordFieldLabelText,
-                                    hintText:
-                                        Constants.confirmPasswordFieldHintText,
-                                    errorText: state
-                                                .confirmPassword.displayError ==
-                                            ConfirmPasswordValidationError
-                                                .invalid
-                                        ? Constants
-                                            .confirmPasswordFieldInvalidErrorText
-                                        : state.confirmPassword.displayError ==
-                                                ConfirmPasswordValidationError
-                                                    .empty
-                                            ? Constants
-                                                .confirmPasswordFieldEmptyErrorText
-                                            : null,
-                                    suffixIcon: IconButton(
-                                        onPressed: () {
-                                          context.read<SignUpBloc>().add(
-                                              SignUpConfirmPasswordObscurePressed());
-                                        },
-                                        icon: Icon(state.confirmPasswordObscured
-                                            ? Icons.visibility
-                                            : Icons.visibility_off)),
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 30.h),
-                            Center(
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text:
-                                          'By clicking SIGN UP, you agree to and have read our ',
+                                  TextSpan(
                                       style: GoogleFonts.outfit(
                                           textStyle: const TextStyle(
-                                        color: Colors.black,
+                                        color: AppPallete.kDarkTealColor,
                                         fontSize: 15,
                                       )),
-                                    ),
-                                    TextSpan(
-                                        style: GoogleFonts.outfit(
-                                            textStyle: const TextStyle(
-                                          color: AppPallete.kDarkTealColor,
-                                          fontSize: 15,
-                                        )),
-                                        text: 'Privacy Policy',
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () async {
-                                            await _launchURL();
-                                          }),
-                                    const TextSpan(
-                                        text: '.',
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 16)),
-                                  ],
-                                ),
+                                      text: 'Privacy Policy',
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          await _launchURL();
+                                        }),
+                                  const TextSpan(
+                                      text: '.',
+                                      style: TextStyle(
+                                          color: Colors.black54, fontSize: 16)),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 10.h),
-                            AuthButton(
-                              buttonText: 'SIGN UP',
-                              onPressed: () async {
-                                FocusScope.of(context).unfocus();
-                                context
-                                    .read<SignUpBloc>()
-                                    .add(SignUpButtonPressed());
-                                final signUpState =
-                                    context.read<SignUpBloc>().state;
-                                if (signUpState.isValid) {
-                                  context.read<AuthBloc>().add(AuthSignUp(
-                                      name: signUpState.fullName.value,
-                                      email: signUpState.email.value,
-                                      password: signUpState.password.value));
-                                }
-                              },
-                            ),
-                            SizedBox(height: 30.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Already have an account? ",
-                                  style: GoogleFonts.nunito(
-                                      textStyle: TextStyle(
-                                    fontSize: 16.sp,
-                                  )),
+                          ),
+                          SizedBox(height: 10.h),
+                          AuthButton(
+                            buttonText: 'SIGN UP',
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              context
+                                  .read<SignUpBloc>()
+                                  .add(SignUpButtonPressed());
+                              final signUpState =
+                                  context.read<SignUpBloc>().state;
+                              if (signUpState.isValid) {
+                                context.read<AuthBloc>().add(AuthSignUp(
+                                    name: signUpState.fullName.value,
+                                    email: signUpState.email.value,
+                                    password: signUpState.password.value));
+                              }
+                            },
+                          ),
+                          SizedBox(height: 30.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account? ",
+                                style: GoogleFonts.nunito(
+                                    textStyle: TextStyle(
+                                  fontSize: 16.sp,
+                                )),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  //TODO: ADD THIS IN ROUTER FILE
+                                  // Navigator.of(context).pushReplacement(
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => const Login()));
+                                },
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(
+                                      color: AppPallete.kDarkTealColor,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    //TODO: ADD THIS IN ROUTER FILE
-                                    // Navigator.of(context).pushReplacement(
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => const Login()));
-                                  },
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                        color: AppPallete.kDarkTealColor,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

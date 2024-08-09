@@ -14,6 +14,7 @@ import 'package:sumify_clean/features/authentication/domain/usecases/forgot_pass
 import 'package:sumify_clean/features/authentication/domain/usecases/login_user.dart';
 import 'package:sumify_clean/features/authentication/domain/usecases/signup_user.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:sumify_clean/firebase_options.dart';
 
