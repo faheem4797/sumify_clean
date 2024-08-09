@@ -34,3 +34,18 @@ final class SignUpConfirmPasswordChanged extends SignUpEvent {
   @override
   List<Object> get props => [confirmPassword];
 }
+
+final class SignUpPasswordObscurePressed extends SignUpEvent {
+  @override
+  List<Object> get props => [];
+}
+
+final class SignUpConfirmPasswordObscurePressed extends SignUpEvent {
+  @override
+  List<Object> get props => [];
+}
+
+final class SignUpButtonPressed extends SignUpEvent {
+  @override
+  List<Object> get props => [];
+}

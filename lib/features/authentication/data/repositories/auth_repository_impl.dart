@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
+import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
@@ -91,6 +92,9 @@ class AuthRepositoryImpl implements AuthRepository {
       await authRemoteDatasource.setUserData(userModel: userModel);
 
       return right(userModel);
+    } on SignUpWithEmailAndPasswordFailure catch (e) {
+      print(e);
+      return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
     }

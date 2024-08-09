@@ -17,6 +17,10 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<SignUpEmailChanged>(_signUpEmailChanged);
     on<SignUpPasswordChanged>(_signUpPasswordChanged);
     on<SignUpConfirmPasswordChanged>(_signUpConfirmPasswordChanged);
+    on<SignUpPasswordObscurePressed>(_signUpPasswordObscurePressed);
+    on<SignUpConfirmPasswordObscurePressed>(
+        _signUpConfirmPasswordObscurePressed);
+    on<SignUpButtonPressed>(_signUpButtonPressed);
   }
 
   FutureOr<void> _signUpFullNameChanged(
@@ -66,6 +70,52 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         confirmPassword: confirmPassword,
         isValid: Formz.validate(
             [state.fullName, state.email, state.password, confirmPassword]),
+      ),
+    );
+  }
+
+  FutureOr<void> _signUpPasswordObscurePressed(
+      SignUpPasswordObscurePressed event, Emitter<SignUpState> emit) {
+    bool obscured = state.passwordObscured;
+    emit(
+      state.copyWith(
+        passwordObscured: !obscured,
+      ),
+    );
+  }
+
+  FutureOr<void> _signUpConfirmPasswordObscurePressed(
+      SignUpConfirmPasswordObscurePressed event, Emitter<SignUpState> emit) {
+    bool obscured = state.confirmPasswordObscured;
+    emit(
+      state.copyWith(
+        confirmPasswordObscured: !obscured,
+      ),
+    );
+  }
+
+  FutureOr<void> _signUpButtonPressed(
+      SignUpButtonPressed event, Emitter<SignUpState> emit) {
+    final fullName = FullName.dirty(state.fullName.value);
+    final email = Email.dirty(state.email.value);
+    final password = Password.dirty(state.password.value);
+    final confirmPassword = ConfirmPassword.dirty(
+      password: password.value,
+      value: state.confirmPassword.value,
+    );
+
+    emit(
+      state.copyWith(
+        fullName: fullName,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        isValid: Formz.validate([
+          fullName,
+          email,
+          password,
+          confirmPassword,
+        ]),
       ),
     );
   }

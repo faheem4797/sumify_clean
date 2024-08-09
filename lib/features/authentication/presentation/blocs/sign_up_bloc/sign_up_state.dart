@@ -8,6 +8,8 @@ final class SignUpState extends Equatable {
     this.confirmPassword = const ConfirmPassword.pure(),
     this.status = FormzSubmissionStatus.initial,
     this.isValid = false,
+    this.passwordObscured = true,
+    this.confirmPasswordObscured = true,
     this.errorMessage,
   });
 
@@ -17,6 +19,8 @@ final class SignUpState extends Equatable {
   final ConfirmPassword confirmPassword;
   final FormzSubmissionStatus status;
   final bool isValid;
+  final bool passwordObscured;
+  final bool confirmPasswordObscured;
   final String? errorMessage;
 
   @override
@@ -27,6 +31,8 @@ final class SignUpState extends Equatable {
         confirmPassword,
         status,
         isValid,
+        passwordObscured,
+        confirmPasswordObscured,
         errorMessage
       ];
 
@@ -37,6 +43,8 @@ final class SignUpState extends Equatable {
     ConfirmPassword? confirmPassword,
     FormzSubmissionStatus? status,
     bool? isValid,
+    bool? passwordObscured,
+    bool? confirmPasswordObscured,
     String? errorMessage,
   }) {
     return SignUpState(
@@ -46,6 +54,9 @@ final class SignUpState extends Equatable {
       confirmPassword: confirmPassword ?? this.confirmPassword,
       status: status ?? this.status,
       isValid: isValid ?? this.isValid,
+      passwordObscured: passwordObscured ?? this.passwordObscured,
+      confirmPasswordObscured:
+          confirmPasswordObscured ?? this.confirmPasswordObscured,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

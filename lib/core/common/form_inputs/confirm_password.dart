@@ -1,6 +1,6 @@
 import 'package:formz/formz.dart';
 
-enum ConfirmPasswordValidationError { short, empty, invalid }
+enum ConfirmPasswordValidationError { empty, invalid }
 
 class ConfirmPassword
     extends FormzInput<String, ConfirmPasswordValidationError> {
@@ -16,8 +16,6 @@ class ConfirmPassword
   ConfirmPasswordValidationError? validator(String value) {
     if (value.isEmpty) {
       return ConfirmPasswordValidationError.empty;
-    } else if (value.length < 8) {
-      return ConfirmPasswordValidationError.short;
     } else if (value == password) {
       return null;
     }
