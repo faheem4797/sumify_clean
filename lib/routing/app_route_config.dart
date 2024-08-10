@@ -60,6 +60,7 @@ class MyAppRouter {
                       try {
                         await FirebaseAuth.instance.signOut();
                         context.read<AppUserCubit>().updateUser(null);
+                        context.goNamed(AppRouteConstants.signinRoute);
                       } catch (e) {
                         print(e);
                       }
@@ -92,9 +93,12 @@ class MyAppRouter {
     ],
     redirect: (context, state) {
       print('redirect function accessed');
-      final appUserState = context.watch<AppUserCubit>().state;
+      print(state.matchedLocation);
 
-      if (state.name == AppRouteConstants.initialRoute) {
+      if (state.matchedLocation == '/' || state.matchedLocation == '/loader') {
+        print('redirect function accessed 1');
+        final appUserState = context.watch<AppUserCubit>().state;
+
         if (appUserState is AppUserInitial) {
           return '/splash';
         } else if (appUserState is AppUserLoading) {
@@ -176,7 +180,7 @@ class _InitialWidgetState extends State<InitialWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Loader(),
       ),

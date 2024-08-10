@@ -45,12 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         } else if (state is AuthSuccess) {
           context.read<AppUserCubit>().updateUser(state.user);
           showSnackBar(context, 'Success');
-          //TODO: ADD THIS IN ROUTER FILE
-
-          // Navigator.pushAndRemoveUntil(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const HomeScreen()),
-          //     (route) => false);
+          context.goNamed(AppRouteConstants.homeRoute);
         }
       },
       builder: (context, state) {
@@ -281,10 +276,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  print('object');
-
-                                  context.replaceNamed(
-                                      AppRouteConstants.signinRoute);
+                                  context
+                                      .goNamed(AppRouteConstants.signinRoute);
                                 },
                                 child: Text(
                                   'Login',
