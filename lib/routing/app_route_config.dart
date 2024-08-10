@@ -78,7 +78,7 @@ class MyAppRouter {
           return const MaterialPage(
               child: Scaffold(
             body: Center(
-              child: Text('Initial'),
+              child: Text(''),
             ),
           ));
         },
@@ -92,54 +92,19 @@ class MyAppRouter {
       ),
     ],
     redirect: (context, state) {
-      print('redirect function accessed');
-      print(state.matchedLocation);
-
       if (state.matchedLocation == '/' || state.matchedLocation == '/loader') {
-        print('redirect function accessed 1');
-        final appUserState = context.watch<AppUserCubit>().state;
+        final appUserState = context.read<AppUserCubit>().state;
 
         if (appUserState is AppUserInitial) {
           return '/splash';
-        } else if (appUserState is AppUserLoading) {
-          return '/loader';
         } else if (appUserState is AppUserLoggedIn) {
           return '/loggedin';
+        } else if (appUserState is AppUserLoading) {
+          return '/loader';
         }
       }
 
       return null;
-      //
-      //
-      //
-      //
-      //
-      // StreamSubscription<AuthState>? _subscription;
-
-      // context.read<AuthBloc>().add(AuthIsUserLoggedIn());
-
-      // var appUserState = context.watch<AppUserCubit>().state;
-      // _subscription = context.read<AuthBloc>().stream.listen((state) {
-      //   if (state is AuthSuccess) {
-      //     context.read<AppUserCubit>().updateUser(state.user);
-      //     _subscription?.cancel();
-      //   } else if (state is AuthFailure) {
-      //     context.read<AppUserCubit>().updateUser(null);
-      //     _subscription?.cancel();
-      //   }
-      // });
-
-      // print('appUserState');
-
-      // state.matchedLocation;
-
-      // if (appUserState is AppUserLoading) {
-      //   return '/loader';
-      // } else if (appUserState is AppUserLoggedIn) {
-      //   return '/';
-      // } else {
-      //   return '/splash';
-      // }
     },
   );
 }
@@ -166,6 +131,13 @@ class _InitialWidgetState extends State<InitialWidget> {
         context.read<AppUserCubit>().updateUser(null);
 
         _subscription?.cancel();
+      }
+
+      final appUserState = context.read<AppUserCubit>().state;
+      if (appUserState is AppUserInitial) {
+        context.goNamed(AppRouteConstants.splashRoute);
+      } else if (appUserState is AppUserLoggedIn) {
+        context.goNamed(AppRouteConstants.homeRoute);
       }
     });
 
