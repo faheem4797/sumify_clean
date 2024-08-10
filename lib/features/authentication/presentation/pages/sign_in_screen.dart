@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/core/common/form_inputs/email.dart';
@@ -12,6 +13,7 @@ import 'package:sumify_clean/core/utils/show_snackbar.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/widgets/auth_button.dart';
+import 'package:sumify_clean/routing/app_route_constants.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -141,10 +143,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  //TODO: Add Router
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         const ForgotPassword()));
+                                  context.pushNamed(
+                                      AppRouteConstants.forgotPasswordRoute);
                                 },
                                 child: Text(
                                   'Forgot Password?',
@@ -187,9 +187,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  //TODO: ADD TO ROUTER
-                                  // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                  //     builder: (context) => const Signup()));
+                                  context.replaceNamed(
+                                      AppRouteConstants.signupRoute);
                                 },
                                 child: Text(
                                   'Sign Up',

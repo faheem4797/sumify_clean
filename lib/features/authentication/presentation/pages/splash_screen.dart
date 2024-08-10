@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/theme/app_pallete.dart';
+import 'package:sumify_clean/routing/app_route_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final CarouselController carouselController = CarouselController();
+
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -120,10 +123,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 onTap: () {
                   currentIndex == 0
                       ? carouselController.animateToPage(1)
-                      : Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const Scaffold()
-                          //const Login()
-                          ));
+                      : print('a');
+                  context.pushNamed(AppRouteConstants.signupRoute);
                 },
                 child: Container(
                   decoration: BoxDecoration(

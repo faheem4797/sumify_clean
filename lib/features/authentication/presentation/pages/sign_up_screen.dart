@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/core/common/form_inputs/confirm_password.dart';
@@ -14,6 +15,7 @@ import 'package:sumify_clean/core/utils/show_snackbar.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/widgets/auth_button.dart';
+import 'package:sumify_clean/routing/app_route_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -279,10 +281,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  //TODO: ADD THIS IN ROUTER FILE
-                                  // Navigator.of(context).pushReplacement(
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => const Login()));
+                                  print('object');
+
+                                  context.replaceNamed(
+                                      AppRouteConstants.signinRoute);
                                 },
                                 child: Text(
                                   'Login',

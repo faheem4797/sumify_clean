@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sumify_clean/core/common/form_inputs/email.dart';
 import 'package:sumify_clean/core/common/widgets/loader.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
@@ -37,7 +38,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           } else if (state is AuthInitial && state.message != null) {
             showSnackBar(context, state.message!);
             Future.delayed(const Duration(seconds: 2), () {
-              Navigator.pop(context);
+              context.pop();
             });
           }
         },

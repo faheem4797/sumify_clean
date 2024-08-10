@@ -48,9 +48,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Sumify',
       theme: AppTheme.lightThemeMode,
-      routeInformationParser: MyAppRouter().router.routeInformationParser,
-      routerDelegate: MyAppRouter().router.routerDelegate,
-      routeInformationProvider: MyAppRouter().router.routeInformationProvider,
+      routerConfig: MyAppRouter().router,
     );
   }
 }
