@@ -6,6 +6,7 @@ import 'package:sumify_clean/features/authentication/presentation/pages/forgot_p
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_in_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_up_screen.dart';
+import 'package:sumify_clean/features/profile/presentation/pages/profile_screen.dart';
 import 'package:sumify_clean/routing/app_route_constants.dart';
 import 'package:sumify_clean/routing/widgets/initial_widget.dart';
 import 'package:sumify_clean/routing/widgets/scaffold_with_navbar.dart';
@@ -14,8 +15,8 @@ class MyAppRouter {
   GoRouter router = GoRouter(
     routes: [
       GoRoute(
-        name: AppRouteConstants.initialRoute,
-        path: '/',
+        name: AppRouteConstants.initialRouteName,
+        path: AppRouteConstants.initialRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(
               child: Scaffold(
@@ -26,36 +27,36 @@ class MyAppRouter {
         },
       ),
       GoRoute(
-        name: AppRouteConstants.splashRoute,
-        path: '/splash',
+        name: AppRouteConstants.splashRouteName,
+        path: AppRouteConstants.splashRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(child: SplashScreen());
         },
       ),
       GoRoute(
-        name: AppRouteConstants.signupRoute,
-        path: '/signup',
+        name: AppRouteConstants.signupRouteName,
+        path: AppRouteConstants.signupRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(child: SignUpScreen());
         },
       ),
       GoRoute(
-        name: AppRouteConstants.signinRoute,
-        path: '/signin',
+        name: AppRouteConstants.signinRouteName,
+        path: AppRouteConstants.signinRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(child: SignInScreen());
         },
       ),
       GoRoute(
-        name: AppRouteConstants.forgotPasswordRoute,
-        path: '/forgotPassword',
+        name: AppRouteConstants.forgotPasswordRouteName,
+        path: AppRouteConstants.forgotPasswordRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(child: ForgotPasswordScreen());
         },
       ),
       GoRoute(
-        name: AppRouteConstants.loaderRoute,
-        path: '/loader',
+        name: AppRouteConstants.loaderRouteName,
+        path: AppRouteConstants.loaderRoutePath,
         pageBuilder: (context, state) {
           return const MaterialPage(child: InitialWidget());
         },
@@ -67,8 +68,8 @@ class MyAppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouteConstants.homeRoute,
-                  path: '/home',
+                  name: AppRouteConstants.homeRouteName,
+                  path: AppRouteConstants.homeRoutePath,
                   pageBuilder: (context, state) {
                     return const MaterialPage(
                         child: Scaffold(
@@ -83,8 +84,8 @@ class MyAppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouteConstants.reportRoute,
-                  path: '/report',
+                  name: AppRouteConstants.reportRouteName,
+                  path: AppRouteConstants.reportRoutePath,
                   pageBuilder: (context, state) {
                     return const MaterialPage(
                         child: Scaffold(
@@ -99,8 +100,8 @@ class MyAppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouteConstants.commentsRoute,
-                  path: '/comments',
+                  name: AppRouteConstants.commentsRouteName,
+                  path: AppRouteConstants.commentsRoutePath,
                   pageBuilder: (context, state) {
                     return const MaterialPage(
                         child: Scaffold(
@@ -115,8 +116,8 @@ class MyAppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouteConstants.contactRoute,
-                  path: '/contact',
+                  name: AppRouteConstants.contactRouteName,
+                  path: AppRouteConstants.contactRoutePath,
                   pageBuilder: (context, state) {
                     return const MaterialPage(
                         child: Scaffold(
@@ -131,56 +132,39 @@ class MyAppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  name: AppRouteConstants.profileRoute,
-                  path: '/profile',
+                  name: AppRouteConstants.profileRouteName,
+                  path: AppRouteConstants.profileRoutePath,
                   pageBuilder: (context, state) {
-                    return const MaterialPage(
-                        child: Scaffold(
-                      body: Center(
-                        child: Text('Profile'),
-                      ),
-                    ));
+                    return const MaterialPage(child: ProfileScreen());
                   },
                 ),
               ],
             ),
           ]),
-      // GoRoute(
-      //   name: AppRouteConstants.homeRoute,
-      //   path: '/loggedin',
-      //   pageBuilder: (context, state) {
-      //     return MaterialPage(
-      //         child: Scaffold(
-      //       body: Column(
-      //         children: [
-      //           const Center(
-      //             child: Text('Logged In'),
-      //           ),
-      //           ElevatedButton(
-      //               onPressed: () async {
-      //                 try {
-      //                   await FirebaseAuth.instance.signOut();
-      //                   context.read<AppUserCubit>().updateUser(null);
-      //                   context.goNamed(AppRouteConstants.signinRoute);
-      //                 } catch (e) {
-      //                   print(e);
-      //                 }
-      //               },
-      //               child: const Text('Logout'))
-      //         ],
-      //       ),
-      //     ));
-      //   },
-      // ),
+      GoRoute(
+        // name: AppRouteConstants.homeRouteName,
+        // path: AppRouteConstants.homeRoutePath,
+        path: '/homePath',
+        pageBuilder: (context, state) {
+          return const MaterialPage(
+              child: Scaffold(
+            body: Center(
+              child: Text('Home'),
+            ),
+          ));
+        },
+      ),
     ],
     redirect: (context, state) {
+      debugPrint(state.matchedLocation);
       if (state.matchedLocation == '/' || state.matchedLocation == '/loader') {
         final appUserState = context.read<AppUserCubit>().state;
+        debugPrint(appUserState.toString());
 
         if (appUserState is AppUserInitial) {
           return '/splash';
         } else if (appUserState is AppUserLoggedIn) {
-          return '/loggedin';
+          return '/home';
         } else if (appUserState is AppUserLoading) {
           return '/loader';
         }

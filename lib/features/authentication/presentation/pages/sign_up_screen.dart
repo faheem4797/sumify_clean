@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         } else if (state is AuthSuccess) {
           context.read<AppUserCubit>().updateUser(state.user);
           showSnackBar(context, 'Success');
-          context.goNamed(AppRouteConstants.homeRoute);
+          context.goNamed(AppRouteConstants.homeRouteName);
         }
       },
       builder: (context, state) {
@@ -276,8 +276,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  context
-                                      .goNamed(AppRouteConstants.signinRoute);
+                                  context.goNamed(
+                                      AppRouteConstants.signinRouteName);
                                 },
                                 child: Text(
                                   'Login',

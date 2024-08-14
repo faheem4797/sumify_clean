@@ -32,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
         } else if (state is AuthSuccess) {
           context.read<AppUserCubit>().updateUser(state.user);
           showSnackBar(context, 'Success');
-          context.go(AppRouteConstants.homeRoute);
+          context.goNamed(AppRouteConstants.homeRouteName);
         }
       },
       builder: (context, state) {
@@ -138,8 +138,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  context.pushNamed(
-                                      AppRouteConstants.forgotPasswordRoute);
+                                  context.pushNamed(AppRouteConstants
+                                      .forgotPasswordRouteName);
                                 },
                                 child: Text(
                                   'Forgot Password?',
@@ -182,8 +182,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  context
-                                      .goNamed(AppRouteConstants.signupRoute);
+                                  context.goNamed(
+                                      AppRouteConstants.signupRouteName);
                                 },
                                 child: Text(
                                   'Sign Up',

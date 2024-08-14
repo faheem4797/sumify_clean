@@ -123,7 +123,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 onTap: () {
                   currentIndex == 0
                       ? carouselController.animateToPage(1)
-                      : context.goNamed(AppRouteConstants.signupRoute);
+                      : context.goNamed(AppRouteConstants.signupRouteName);
                 },
                 child: Container(
                   decoration: BoxDecoration(

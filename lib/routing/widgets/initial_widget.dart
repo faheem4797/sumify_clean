@@ -34,9 +34,9 @@ class _InitialWidgetState extends State<InitialWidget> {
 
       final appUserState = context.read<AppUserCubit>().state;
       if (appUserState is AppUserInitial) {
-        context.goNamed(AppRouteConstants.splashRoute);
+        context.goNamed(AppRouteConstants.splashRouteName);
       } else if (appUserState is AppUserLoggedIn) {
-        context.goNamed(AppRouteConstants.homeRoute);
+        context.goNamed(AppRouteConstants.homeRouteName);
       }
     });
 
