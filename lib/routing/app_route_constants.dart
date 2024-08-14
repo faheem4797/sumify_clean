@@ -6,4 +6,8 @@ class AppRouteConstants {
   static const String homeRoute = '/';
   static const String loaderRoute = 'loader';
   static const String initialRoute = 'initial';
+  static const String reportRoute = 'report';
+  static const String commentsRoute = 'comments';
+  static const String contactRoute = 'contact';
+  static const String profileRoute = 'profile';
 }

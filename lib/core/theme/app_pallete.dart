@@ -7,6 +7,7 @@ class AppPallete {
   static const kWhiteColor = Color(0xffF6F5F8);
   static const kBlackColor = Colors.black;
   static const kDarkerTealColor = Color(0xff184046);
+  static const kShadowColor = Colors.black38;
   //
   //
 
