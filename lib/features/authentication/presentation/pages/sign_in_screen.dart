@@ -49,7 +49,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 child: Scaffold(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: AppPallete.kTransparentColor,
                   body: SingleChildScrollView(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25.w),
