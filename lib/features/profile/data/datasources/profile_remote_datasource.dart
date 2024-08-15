@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
+import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
 
 abstract interface class ProfileRemoteDataSource {
   Future<String> uploadProfileImage({
@@ -16,7 +17,8 @@ abstract interface class ProfileRemoteDataSource {
   });
   Future<void> updateUserData(
       {required String userId, required String newPictureFilePathFromFirebase});
-  Future<void> signOutUser();
+  Future<String> signOutUser();
+  Future<UserModel> getUserData({required String userId});
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -76,14 +78,32 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<void> signOutUser() async {
+  Future<String> signOutUser() async {
     try {
       await firebaseAuth.signOut();
-      return;
+      return 'Success';
     } on FirebaseException catch (e) {
       throw ServerException(e.code);
     } catch (e) {
       throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> getUserData({required String userId}) async {
+    try {
+      final userDoc =
+          await firebaseFirestore.collection('users').doc(userId).get();
+
+      if (userDoc.data() != null) {
+        return UserModel.fromMap(userDoc.data()!);
+      } else {
+        throw const FirebaseDataFailure();
+      }
+    } on FirebaseException catch (e) {
+      throw FirebaseDataFailure.fromCode(e.code);
+    } catch (_) {
+      throw const FirebaseDataFailure();
     }
   }
 }
