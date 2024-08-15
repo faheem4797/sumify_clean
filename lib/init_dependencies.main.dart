@@ -26,6 +26,7 @@ Future<void> initDependencies() async {
       () => ConnectionCheckerImpl(serviceLocator()));
 
   await _initAuth();
+  await _initProfile();
 }
 
 Future<void> _initAuth() async {
@@ -48,4 +49,24 @@ Future<void> _initAuth() async {
     ..registerLazySingleton(() => SignUpBloc())
     ..registerLazySingleton(() => SignInBloc())
     ..registerLazySingleton(() => ForgotPasswordBloc());
+}
+
+Future<void> _initProfile() async {
+  serviceLocator
+    ..registerFactory<ProfileRemoteDataSource>(
+        () => ProfileRemoteDataSourceImpl(
+              firebaseAuth: serviceLocator(),
+              firebaseStorage: serviceLocator(),
+              firebaseFirestore: serviceLocator(),
+            ))
+    ..registerFactory<ProfileRepository>(() => ProfileRepositpryImpl(
+          connectionChecker: serviceLocator(),
+          profileRemoteDataSource: serviceLocator(),
+        ))
+    ..registerFactory(
+        () => ChangeProfilePicture(profileRepository: serviceLocator()))
+    ..registerFactory(() => LogoutUser(profileRepository: serviceLocator()))
+    ..registerLazySingleton(
+        () => EditProfileImageBloc(changeProfilePicture: serviceLocator()))
+    ..registerLazySingleton(() => LogoutBloc(logoutUser: serviceLocator()));
 }
