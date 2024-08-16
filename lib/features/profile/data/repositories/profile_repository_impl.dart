@@ -54,6 +54,9 @@ class ProfileRepositpryImpl implements ProfileRepository {
   @override
   Future<Either<Failure, String>> signOutUser() async {
     try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
       final messageString = await profileRemoteDataSource.signOutUser();
 
       return right(messageString);
@@ -69,6 +72,9 @@ class ProfileRepositpryImpl implements ProfileRepository {
       required AppUser appUser}) async {
     if (email == appUser.email) {
       try {
+        if (!await connectionChecker.isConnected) {
+          return left(Failure(Constants.noConnectionErrorMessage));
+        }
         await profileRemoteDataSource.deleteUserAccount(
             email: email, password: password);
 
