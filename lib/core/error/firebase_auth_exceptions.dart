@@ -117,3 +117,46 @@ class SendPasswordResetEmailFailure implements Exception {
   /// The associated error message.
   final String message;
 }
+
+class ReauthenticateUserFailure implements Exception {
+  /// {@macro send_password_reset_email_failure}
+  const ReauthenticateUserFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
+
+  /// Create a password reset email message
+  /// from a Firebase authentication exception code.
+  factory ReauthenticateUserFailure.fromCode(String code) {
+    switch (code) {
+      case 'user-mismatch':
+        return const ReauthenticateUserFailure(
+          'Wrong Credentials.',
+        );
+      case 'user-not-found':
+        return const ReauthenticateUserFailure(
+          'User not found, please create an account.',
+        );
+      case 'invalid-credential':
+        return const ReauthenticateUserFailure(
+          'Invalid Credentials, please try again later.',
+        );
+      case 'invalid-email':
+        return const ReauthenticateUserFailure(
+          'Email is not valid or badly formatted.',
+        );
+      case 'wrong-password':
+        return const ReauthenticateUserFailure(
+          'Incorrect password.',
+        );
+      case 'requires-recent-login':
+        return const ReauthenticateUserFailure(
+          'Please login again before attempting this action.',
+        );
+      default:
+        return const ReauthenticateUserFailure();
+    }
+  }
+
+  /// The associated error message.
+  final String message;
+}

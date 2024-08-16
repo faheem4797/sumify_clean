@@ -9,6 +9,7 @@ import 'package:sumify_clean/features/authentication/presentation/blocs/auth_blo
 import 'package:sumify_clean/features/authentication/presentation/blocs/forgot_password_bloc/forgot_password_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
+import 'package:sumify_clean/features/profile/presentation/blocs/delete_account_bloc/delete_account_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
 import 'package:sumify_clean/init_dependencies.dart';
@@ -41,6 +42,7 @@ void main() async {
           BlocProvider(create: (_) => serviceLocator<ForgotPasswordBloc>()),
           BlocProvider(create: (_) => serviceLocator<EditProfileImageBloc>()),
           BlocProvider(create: (_) => serviceLocator<LogoutBloc>()),
+          BlocProvider(create: (_) => serviceLocator<DeleteAccountBloc>()),
         ],
         child: const MyApp(),
       ),

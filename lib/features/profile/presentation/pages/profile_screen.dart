@@ -8,7 +8,9 @@ import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/core/common/widgets/loader.dart';
 import 'package:sumify_clean/core/theme/app_pallete.dart';
 import 'package:sumify_clean/core/utils/pick_image.dart';
+import 'package:sumify_clean/core/utils/reauthenticate_dialog.dart';
 import 'package:sumify_clean/core/utils/show_snackbar.dart';
+import 'package:sumify_clean/features/profile/presentation/blocs/delete_account_bloc/delete_account_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
 import 'package:sumify_clean/routing/app_route_constants.dart';
@@ -55,232 +57,265 @@ class ProfileScreen extends StatelessWidget {
                   }
                 },
               ),
+              BlocListener<DeleteAccountBloc, DeleteAccountState>(
+                listener: (context, state) {
+                  if (state is DeleteAccountFailure) {
+                    showSnackBar(context, state.message);
+                  } else if (state is DeleteAccountSuccess) {
+                    showSnackBar(context, state.message);
+                    context.read<AppUserCubit>().updateUser(null);
+                    context.goNamed(AppRouteConstants.signupRouteName);
+                  }
+                },
+              ),
             ],
             child: BlocBuilder<LogoutBloc, LogoutState>(
-              builder: (context, state) {
-                return (state is LogoutLoading)
-                    ? const Loader()
-                    : BlocBuilder<EditProfileImageBloc, EditProfileImageState>(
-                        builder: (context, state) {
-                          return (state is EditProfileImageLoading)
-                              ? const Loader()
-                              : Center(
-                                  child:
-                                      BlocBuilder<AppUserCubit, AppUserState>(
-                                    builder: (context, state) {
-                                      return (state is AppUserLoading)
-                                          ? const Loader()
-                                          : (state is AppUserLoggedIn)
-                                              ? Column(
-                                                  children: [
-                                                    SizedBox(
-                                                        height: (constraints
-                                                                    .maxHeight *
-                                                                0.2)
-                                                            .h),
-                                                    SizedBox(
+              builder: (context, state1) {
+                return BlocBuilder<EditProfileImageBloc, EditProfileImageState>(
+                  builder: (context, state2) {
+                    return BlocBuilder<DeleteAccountBloc, DeleteAccountState>(
+                      builder: (context, state3) {
+                        return (state1 is LogoutLoading) ||
+                                (state2 is EditProfileImageLoading) ||
+                                (state3 is DeleteAccountLoading)
+                            ? const Loader()
+                            : Center(
+                                child: BlocBuilder<AppUserCubit, AppUserState>(
+                                  builder: (context, state) {
+                                    return (state is AppUserLoading)
+                                        ? const Loader()
+                                        : (state is AppUserLoggedIn)
+                                            ? Column(
+                                                children: [
+                                                  SizedBox(
                                                       height: (constraints
                                                                   .maxHeight *
-                                                              0.18)
-                                                          .h,
-                                                      width: (constraints
-                                                                  .maxHeight *
-                                                              0.18)
-                                                          .w,
-                                                      child: Stack(children: [
-                                                        DottedBorder(
-                                                          borderType:
-                                                              BorderType.Circle,
-                                                          strokeCap:
-                                                              StrokeCap.butt,
-                                                          strokeWidth: 3.w,
-                                                          dashPattern: const [
-                                                            5,
-                                                            5
-                                                          ],
-                                                          color: AppPallete
-                                                              .kDarkerTealColor,
-                                                          child: CircleAvatar(
-                                                            radius: 59.r,
-                                                            backgroundColor:
-                                                                AppPallete
-                                                                    .kWhiteColor,
-                                                            foregroundImage: (state
-                                                                        .user.pictureFilePathFromFirebase ==
-                                                                    '')
-                                                                ? const AssetImage(
-                                                                        'assets/images/profile/user.png')
-                                                                    as ImageProvider
-                                                                : CachedNetworkImageProvider(
-                                                                    state.user
-                                                                        .pictureFilePathFromFirebase!),
-                                                          ),
-                                                        ),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .bottomRight,
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    right: 3.w,
-                                                                    bottom:
-                                                                        4.h),
-                                                            child: InkWell(
-                                                              onTap: () async {
-                                                                final pickedImage =
-                                                                    await pickImage();
-                                                                if (pickedImage !=
-                                                                        null &&
-                                                                    context
-                                                                        .mounted) {
-                                                                  context
-                                                                      .read<
-                                                                          EditProfileImageBloc>()
-                                                                      .add(
-                                                                          EditUserProfileImageEvent(
-                                                                        userId: state
-                                                                            .user
-                                                                            .id,
-                                                                        pictureFilePathFromFirebase:
-                                                                            state.user.pictureFilePathFromFirebase ??
-                                                                                '',
-                                                                        profileImage:
-                                                                            pickedImage.file,
-                                                                        fileName:
-                                                                            pickedImage.name,
-                                                                      ));
-                                                                }
-                                                              },
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: (constraints
-                                                                            .maxHeight *
-                                                                        0.023)
-                                                                    .r,
-                                                                backgroundColor:
-                                                                    AppPallete
-                                                                        .kDarkerTealColor,
-                                                                child: Center(
-                                                                    child: Icon(
-                                                                  Icons.edit,
-                                                                  size: (constraints
-                                                                              .maxHeight *
-                                                                          0.032)
-                                                                      .h,
-                                                                  color: AppPallete
-                                                                      .kWhiteColor,
-                                                                )),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ]),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.h,
-                                                    ),
-                                                    Text(
-                                                      state.user.name,
-                                                      style: TextStyle(
-                                                          fontSize: 18.sp,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    ),
-                                                    Text(
-                                                      state.user.email,
-                                                      style: TextStyle(
-                                                          fontSize: 15.sp,
-                                                          color: AppPallete
-                                                              .kLightGreyColor),
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 30.w,
-                                                          right: 70.w),
-                                                      child: Column(
-                                                        children: [
-                                                          SizedBox(
-                                                              height: (constraints
-                                                                          .maxHeight *
-                                                                      0.16)
-                                                                  .h),
-                                                          InkWell(
-                                                            onTap: () async {
-                                                              // await openDialog(context, userProvider,
-                                                              //     articleProvider);
-                                                            },
-                                                            child: Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                    width: 5.w),
-                                                                const Icon(
-                                                                  Icons
-                                                                      .person_remove_outlined,
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        25.w),
-                                                                Text(
-                                                                  'Delete Account',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          18.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Divider(
-                                                            height: 20.h,
-                                                            thickness: 2.w,
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () async {
-                                                              context
-                                                                  .read<
-                                                                      LogoutBloc>()
-                                                                  .add(
-                                                                      UserLogoutEvent());
-                                                            },
-                                                            child: Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                    width: 5.w),
-                                                                const Icon(
-                                                                  Icons.logout,
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        25.w),
-                                                                Text(
-                                                                  'Logout',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          18.sp,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          const Divider(
-                                                            height: 20,
-                                                            thickness: 2,
-                                                          ),
+                                                              0.2)
+                                                          .h),
+                                                  SizedBox(
+                                                    height:
+                                                        (constraints.maxHeight *
+                                                                0.18)
+                                                            .h,
+                                                    width:
+                                                        (constraints.maxHeight *
+                                                                0.18)
+                                                            .w,
+                                                    child: Stack(children: [
+                                                      DottedBorder(
+                                                        borderType:
+                                                            BorderType.Circle,
+                                                        strokeCap:
+                                                            StrokeCap.butt,
+                                                        strokeWidth: 3.w,
+                                                        dashPattern: const [
+                                                          5,
+                                                          5
                                                         ],
+                                                        color: AppPallete
+                                                            .kDarkerTealColor,
+                                                        child: CircleAvatar(
+                                                          radius: 59.r,
+                                                          backgroundColor:
+                                                              AppPallete
+                                                                  .kWhiteColor,
+                                                          foregroundImage: (state
+                                                                      .user.pictureFilePathFromFirebase ==
+                                                                  '')
+                                                              ? const AssetImage(
+                                                                      'assets/images/profile/user.png')
+                                                                  as ImageProvider
+                                                              : CachedNetworkImageProvider(
+                                                                  state.user
+                                                                      .pictureFilePathFromFirebase!),
+                                                        ),
                                                       ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .bottomRight,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 3.w,
+                                                                  bottom: 4.h),
+                                                          child: InkWell(
+                                                            onTap: () async {
+                                                              final pickedImage =
+                                                                  await pickImage();
+                                                              if (pickedImage !=
+                                                                      null &&
+                                                                  context
+                                                                      .mounted) {
+                                                                context
+                                                                    .read<
+                                                                        EditProfileImageBloc>()
+                                                                    .add(
+                                                                        EditUserProfileImageEvent(
+                                                                      userId: state
+                                                                          .user
+                                                                          .id,
+                                                                      pictureFilePathFromFirebase:
+                                                                          state.user.pictureFilePathFromFirebase ??
+                                                                              '',
+                                                                      profileImage:
+                                                                          pickedImage
+                                                                              .file,
+                                                                      fileName:
+                                                                          pickedImage
+                                                                              .name,
+                                                                    ));
+                                                              }
+                                                            },
+                                                            child: CircleAvatar(
+                                                              radius: (constraints
+                                                                          .maxHeight *
+                                                                      0.023)
+                                                                  .r,
+                                                              backgroundColor:
+                                                                  AppPallete
+                                                                      .kDarkerTealColor,
+                                                              child: Center(
+                                                                  child: Icon(
+                                                                Icons.edit,
+                                                                size: (constraints
+                                                                            .maxHeight *
+                                                                        0.032)
+                                                                    .h,
+                                                                color: AppPallete
+                                                                    .kWhiteColor,
+                                                              )),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ]),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10.h,
+                                                  ),
+                                                  Text(
+                                                    state.user.name,
+                                                    style: TextStyle(
+                                                        fontSize: 18.sp,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  ),
+                                                  Text(
+                                                    state.user.email,
+                                                    style: TextStyle(
+                                                        fontSize: 15.sp,
+                                                        color: AppPallete
+                                                            .kLightGreyColor),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 30.w,
+                                                        right: 70.w),
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                            height: (constraints
+                                                                        .maxHeight *
+                                                                    0.16)
+                                                                .h),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            final data =
+                                                                await showReAuthenticationDialog(
+                                                                    context);
+                                                            if (!context
+                                                                .mounted) {
+                                                              return;
+                                                            }
+                                                            final userState = context
+                                                                    .read<
+                                                                        AppUserCubit>()
+                                                                    .state
+                                                                as AppUserLoggedIn;
+                                                            context
+                                                                .read<
+                                                                    DeleteAccountBloc>()
+                                                                .add(DeleteUserAccountEvent(
+                                                                    email: data
+                                                                        .email,
+                                                                    password: data
+                                                                        .password,
+                                                                    appUser:
+                                                                        userState
+                                                                            .user));
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                  width: 5.w),
+                                                              const Icon(
+                                                                Icons
+                                                                    .person_remove_outlined,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 25.w),
+                                                              Text(
+                                                                'Delete Account',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Divider(
+                                                          height: 20.h,
+                                                          thickness: 2.w,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            context
+                                                                .read<
+                                                                    LogoutBloc>()
+                                                                .add(
+                                                                    UserLogoutEvent());
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                  width: 5.w),
+                                                              const Icon(
+                                                                Icons.logout,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 25.w),
+                                                              Text(
+                                                                'Logout',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const Divider(
+                                                          height: 20,
+                                                          thickness: 2,
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                )
-                                              : Container();
-                                    },
-                                  ),
-                                );
-                        },
-                      );
+                                                  ),
+                                                ],
+                                              )
+                                            : Container();
+                                  },
+                                ),
+                              );
+                      },
+                    );
+                  },
+                );
               },
             ),
           )

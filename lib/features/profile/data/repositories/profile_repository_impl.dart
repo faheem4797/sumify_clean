@@ -4,6 +4,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/domain/entities/app_user.dart';
 import 'package:sumify_clean/core/error/failure.dart';
+import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
+import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
@@ -42,6 +44,8 @@ class ProfileRepositpryImpl implements ProfileRepository {
           await profileRemoteDataSource.getUserData(userId: userId);
 
       return right(userModel);
+    } on FirebaseDataFailure catch (e) {
+      return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
     }
@@ -56,5 +60,30 @@ class ProfileRepositpryImpl implements ProfileRepository {
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteAccount(
+      {required String email,
+      required String password,
+      required AppUser appUser}) async {
+    if (email == appUser.email) {
+      try {
+        await profileRemoteDataSource.deleteUserAccount(
+            email: email, password: password);
+
+        await profileRemoteDataSource.deleteUserData(
+            userId: appUser.id,
+            filePathFromFirebasae: appUser.pictureFilePathFromFirebase ?? '');
+        return right('Account Deleted Successfully!');
+      } on ReauthenticateUserFailure catch (e) {
+        return left(Failure(e.message));
+      } on FirebaseDataFailure catch (e) {
+        return left(Failure(e.message));
+      } catch (e) {
+        return left(Failure(e.toString()));
+      }
+    }
+    return left(Failure('Wrong Email!'));
   }
 }

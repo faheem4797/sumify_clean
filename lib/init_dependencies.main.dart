@@ -66,7 +66,10 @@ Future<void> _initProfile() async {
     ..registerFactory(
         () => ChangeProfilePicture(profileRepository: serviceLocator()))
     ..registerFactory(() => LogoutUser(profileRepository: serviceLocator()))
+    ..registerFactory(() => DeleteAccount(profileRepository: serviceLocator()))
     ..registerLazySingleton(
         () => EditProfileImageBloc(changeProfilePicture: serviceLocator()))
-    ..registerLazySingleton(() => LogoutBloc(logoutUser: serviceLocator()));
+    ..registerLazySingleton(() => LogoutBloc(logoutUser: serviceLocator()))
+    ..registerLazySingleton(
+        () => DeleteAccountBloc(deleteAccount: serviceLocator()));
 }

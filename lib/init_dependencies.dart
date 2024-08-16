@@ -21,7 +21,9 @@ import 'package:sumify_clean/features/profile/data/datasources/profile_remote_da
 import 'package:sumify_clean/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:sumify_clean/features/profile/domain/repositories/profile_repository.dart';
 import 'package:sumify_clean/features/profile/domain/usecases/change_profile_picture.dart';
+import 'package:sumify_clean/features/profile/domain/usecases/delete_account.dart';
 import 'package:sumify_clean/features/profile/domain/usecases/logout_user.dart';
+import 'package:sumify_clean/features/profile/presentation/blocs/delete_account_bloc/delete_account_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
 import 'package:sumify_clean/firebase_options.dart';

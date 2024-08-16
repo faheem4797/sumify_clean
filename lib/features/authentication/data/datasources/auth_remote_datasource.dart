@@ -93,9 +93,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
       return 'Password reset email sent successfully';
     } on FirebaseAuthException catch (e) {
-      throw SignInWithEmailAndPasswordFailure.fromCode(e.code);
+      throw SendPasswordResetEmailFailure.fromCode(e.code);
     } catch (e) {
-      throw const SignInWithEmailAndPasswordFailure();
+      throw const SendPasswordResetEmailFailure();
     }
   }
 
