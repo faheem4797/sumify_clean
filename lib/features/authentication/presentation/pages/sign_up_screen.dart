@@ -18,14 +18,9 @@ import 'package:sumify_clean/features/authentication/presentation/widgets/auth_b
 import 'package:sumify_clean/routing/app_route_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
-  @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _launchURL() async {
     final uri = Uri.parse(Constants.privacyPolicyURL);
     if (!await launchUrl(

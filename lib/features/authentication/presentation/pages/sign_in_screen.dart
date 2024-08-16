@@ -15,14 +15,9 @@ import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_
 import 'package:sumify_clean/features/authentication/presentation/widgets/auth_button.dart';
 import 'package:sumify_clean/routing/app_route_constants.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
 
-  @override
-  State<SignInScreen> createState() => _SignInScreenState();
-}
-
-class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(

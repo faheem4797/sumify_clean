@@ -17,6 +17,11 @@ import 'package:sumify_clean/features/authentication/presentation/blocs/auth_blo
 import 'package:sumify_clean/features/authentication/presentation/blocs/forgot_password_bloc/forgot_password_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
+import 'package:sumify_clean/features/contact_us/data/datasources/contact_us_remote_datasource.dart';
+import 'package:sumify_clean/features/contact_us/data/repositories/contact_us_repository_impl.dart';
+import 'package:sumify_clean/features/contact_us/domain/repositories/contact_us_repository.dart';
+import 'package:sumify_clean/features/contact_us/domain/usecases/send_email.dart';
+import 'package:sumify_clean/features/contact_us/presentation/blocs/contact_us_bloc/contact_us_bloc.dart';
 import 'package:sumify_clean/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:sumify_clean/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:sumify_clean/features/profile/domain/repositories/profile_repository.dart';

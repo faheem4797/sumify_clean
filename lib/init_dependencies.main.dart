@@ -27,6 +27,7 @@ Future<void> initDependencies() async {
 
   await _initAuth();
   await _initProfile();
+  await _initContactUs();
 }
 
 Future<void> _initAuth() async {
@@ -72,4 +73,16 @@ Future<void> _initProfile() async {
     ..registerLazySingleton(() => LogoutBloc(logoutUser: serviceLocator()))
     ..registerLazySingleton(
         () => DeleteAccountBloc(deleteAccount: serviceLocator()));
+}
+
+Future<void> _initContactUs() async {
+  serviceLocator
+    ..registerFactory<ContactUsRemoteDatasource>(
+        () => ContactUsRemoteDatasourceImpl())
+    ..registerFactory<ContactUsRepository>(() => ContactUsRepositoryImpl(
+          connectionChecker: serviceLocator(),
+          contactUsRemoteDatasource: serviceLocator(),
+        ))
+    ..registerFactory(() => SendEmail(contactUsRepository: serviceLocator()))
+    ..registerLazySingleton(() => ContactUsBloc(sendEmail: serviceLocator()));
 }

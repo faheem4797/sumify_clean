@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
+import 'package:sumify_clean/core/secrets/app_secrets.dart';
 import 'package:sumify_clean/features/contact_us/data/models/contact_us_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,10 +15,6 @@ class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
   Future<String> sendContactEmail(
       {required ContactUsModel contactUsModel}) async {
     try {
-      const String serviceId = 'service_9tz4peu';
-      const String templateId = 'template_jkoixvw';
-      const String userId = 'teMSbzGxAR-uv1HhS';
-
       final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
       final response = await http.post(
         url,
@@ -26,9 +23,9 @@ class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
           'Content-Type': 'application/json'
         },
         body: json.encode({
-          'service_id': serviceId,
-          'template_id': templateId,
-          'user_id': userId,
+          'service_id': AppSecrets.serviceId,
+          'template_id': AppSecrets.templateId,
+          'user_id': AppSecrets.userId,
           'template_params': {
             'user_name':
                 '${contactUsModel.firstName} ${contactUsModel.lastName}',
@@ -39,7 +36,11 @@ class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
       );
       debugPrint(response.body);
       debugPrint(response.statusCode.toString());
-      return 'Email Sent Successfully';
+      if (response.statusCode == 200) {
+        return 'Email Sent Successfully';
+      } else {
+        throw const ServerException('Unexpected Error Occured!');
+      }
     } catch (e) {
       throw ServerException(e.toString());
     }

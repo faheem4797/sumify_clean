@@ -6,6 +6,7 @@ import 'package:sumify_clean/features/authentication/presentation/pages/forgot_p
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_in_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_up_screen.dart';
+import 'package:sumify_clean/features/contact_us/presentation/pages/contact_us_screen.dart';
 import 'package:sumify_clean/features/profile/presentation/pages/profile_screen.dart';
 import 'package:sumify_clean/routing/app_route_constants.dart';
 import 'package:sumify_clean/routing/widgets/initial_widget.dart';
@@ -119,12 +120,7 @@ class MyAppRouter {
                   name: AppRouteConstants.contactRouteName,
                   path: AppRouteConstants.contactRoutePath,
                   pageBuilder: (context, state) {
-                    return const MaterialPage(
-                        child: Scaffold(
-                      body: Center(
-                        child: Text('Contact Us'),
-                      ),
-                    ));
+                    return const MaterialPage(child: ContactUsScreen());
                   },
                 ),
               ],
