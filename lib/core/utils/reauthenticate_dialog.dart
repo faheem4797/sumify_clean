@@ -27,8 +27,10 @@ Future<ReAuthenticationData> showReAuthenticationDialog(
               children: [
                 TextFormField(
                   autofocus: true,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter your email here:'),
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your email here:',
+                    labelText: 'Email Adress',
+                  ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == '' || value == null) {
@@ -49,7 +51,9 @@ Future<ReAuthenticationData> showReAuthenticationDialog(
                 TextFormField(
                   obscureText: true,
                   decoration: const InputDecoration(
-                      hintText: 'Enter your password here:'),
+                    hintText: 'Enter your password here:',
+                    labelText: 'Password',
+                  ),
                   keyboardType: TextInputType.name,
                   validator: (value) {
                     if (value == '' || value == null) {
