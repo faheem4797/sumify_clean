@@ -1,3 +1,4 @@
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,8 +9,11 @@ import 'package:sumify_clean/features/authentication/presentation/blocs/auth_blo
 import 'package:sumify_clean/features/authentication/presentation/blocs/forgot_password_bloc/forgot_password_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:sumify_clean/features/authentication/presentation/blocs/sign_up_bloc/sign_up_bloc.dart';
+import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
+import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
 import 'package:sumify_clean/init_dependencies.dart';
 import 'package:sumify_clean/routing/app_route_config.dart';
+// import 'package:device_preview/device_preview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +22,9 @@ void main() async {
   await initDependencies();
 
   runApp(
+    // DevicePreview(
+    //   enabled: !kReleaseMode,
+    //   builder: (context) =>
     ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
@@ -31,11 +38,14 @@ void main() async {
           ),
           BlocProvider(create: (_) => serviceLocator<SignUpBloc>()),
           BlocProvider(create: (_) => serviceLocator<SignInBloc>()),
-          BlocProvider(create: (_) => serviceLocator<ForgotPasswordBloc>())
+          BlocProvider(create: (_) => serviceLocator<ForgotPasswordBloc>()),
+          BlocProvider(create: (_) => serviceLocator<EditProfileImageBloc>()),
+          BlocProvider(create: (_) => serviceLocator<LogoutBloc>()),
         ],
         child: const MyApp(),
       ),
     ),
+    // ),
   );
 }
 

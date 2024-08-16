@@ -21,7 +21,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       // directly passed as the body of the Scaffold.
       body: navigationShell,
       bottomNavigationBar: SizedBox(
-        height: 90.h,
+        height: 96.h,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(50.r)),
