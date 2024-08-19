@@ -41,4 +41,20 @@ class Constants {
   static const messageFieldLabelText = 'Message';
   static const messageFieldHintText = 'Leave a message for us';
   static const messageFieldErrorText = 'Please enter your message';
+
+  // Define the title prompt
+  static const titlePrompt =
+      'Generate a compelling and relevant title for the following text. Aim for uniqueness and relevance to attract attention and encourage engagement.';
+
+  // Define the report prompt
+  static const reportPrompt =
+      'Generate a concise, professional report summarizing the provided text. Ensure it includes key insights, analysis, recommendations, and a conclusion.';
+
+  // Define the summarize prompt
+  static const summarizePrompt =
+      'Please summarize the text below in a quick and easy-to-understand manner.';
+
+  // Define the comments promopt
+  static const commentsPrompt =
+      'Generate thoughtful and relevant comments to post in response to the following article or social media post. Your comments should be logical and directly related to the subject matter of the article or post. Please provide at least three comments that would be suitable for posting in the comments section. Keep your comments concise and natural-sounding. Write comments in a list in numerical order and do not use any digits within the comments.';
 }

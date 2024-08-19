@@ -3,7 +3,7 @@ class Article {
   final String title;
   final String summary;
   final String report;
-  final String comments;
+  final List<String> comments;
   Article({
     required this.article,
     required this.title,
