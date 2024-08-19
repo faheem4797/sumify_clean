@@ -28,4 +28,17 @@ class Constants {
   static const confirmPasswordFieldHintText = 'Confirm your password';
   static const confirmPasswordFieldEmptyErrorText = 'Please enter a password';
   static const confirmPasswordFieldInvalidErrorText = 'Passwords did not match';
+
+  //First Name Field
+  static const firstNameFieldLabelText = 'First Name';
+  static const firstNameFieldHintText = 'Enter your first name';
+  static const firstNameFieldErrorText = 'Please enter your first name';
+  //Last Name Field
+  static const lastNameFieldLabelText = 'Last Name';
+  static const lastNameFieldHintText = 'Enter your last name';
+  static const lastNameFieldErrorText = 'Please enter your last name';
+  //Message Field
+  static const messageFieldLabelText = 'Message';
+  static const messageFieldHintText = 'Leave a message for us';
+  static const messageFieldErrorText = 'Please enter your message';
 }

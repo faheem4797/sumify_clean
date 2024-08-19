@@ -72,6 +72,20 @@ class ContactUsBloc extends Bloc<ContactUsEvent, ContactUsState> {
 
   FutureOr<void> _contactUsSubmitButtonPressed(
       ContactUsSubmitButtonPressed event, Emitter<ContactUsState> emit) async {
+    final firstName = FullName.dirty(state.firstName.value);
+    final lastName = FullName.dirty(state.lastName.value);
+    final email = Email.dirty(state.email.value);
+    final message = FullName.dirty(state.message.value);
+    emit(
+      state.copyWith(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        message: message,
+        isValid: Formz.validate(
+            [state.firstName, state.lastName, state.email, state.message]),
+      ),
+    );
     if (!state.isValid) return;
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
@@ -88,5 +102,18 @@ class ContactUsBloc extends Bloc<ContactUsEvent, ContactUsState> {
       )),
       (r) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
     );
+    await Future.delayed(const Duration(milliseconds: 100));
+    const newFirstName = FullName.pure();
+    const newLastName = FullName.pure();
+    const newEmail = Email.pure();
+    const newMessage = FullName.pure();
+    emit(state.copyWith(
+      firstName: newFirstName,
+      lastName: newLastName,
+      email: newEmail,
+      message: newMessage,
+      status: FormzSubmissionStatus.initial,
+      isValid: false,
+    ));
   }
 }
