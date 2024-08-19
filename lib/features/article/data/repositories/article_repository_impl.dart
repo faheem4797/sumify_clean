@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
+import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/article/data/datasources/article_remote_datasource.dart';
 import 'package:sumify_clean/features/article/domain/entities/article.dart';
@@ -14,8 +15,18 @@ class ArticleRepositoryImpl implements ArticleRepository {
       {required this.connectionChecker, required this.articleRemoteDatasource});
   @override
   Future<Either<Failure, Article>> setArticle({required String article}) async {
-    if (!await connectionChecker.isConnected) {
-      return left(Failure(Constants.noConnectionErrorMessage));
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+      final articleModel =
+          await articleRemoteDatasource.setUserArticle(articleText: article);
+
+      return right(articleModel);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    } catch (e) {
+      return left(Failure(e.toString()));
     }
   }
 }
