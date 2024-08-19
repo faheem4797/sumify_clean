@@ -4,4 +4,6 @@ import 'package:sumify_clean/features/article/domain/entities/article.dart';
 
 abstract interface class ArticleRepository {
   Future<Either<Failure, Article>> setArticle({required String article});
+  Future<Either<Failure, String>> saveAsPdf(
+      {required String report, required String fileName});
 }
