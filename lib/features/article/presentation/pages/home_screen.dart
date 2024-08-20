@@ -85,6 +85,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context.read<ArticleBloc>().add(
                                         ArticleTextChanged(articleText: value));
                                   },
+                                  contextMenuBuilder:
+                                      (context, editableTextState) {
+                                    return AdaptiveTextSelectionToolbar
+                                        .editable(
+                                      anchors:
+                                          editableTextState.contextMenuAnchors,
+                                      clipboardStatus:
+                                          ClipboardStatus.pasteable,
+                                      // to apply the normal behavior when click on copy (copy in clipboard close toolbar)
+                                      // use an empty function `() {}` to hide this option from the toolbar
+                                      onCopy: () =>
+                                          editableTextState.copySelection(
+                                              SelectionChangedCause.toolbar),
+                                      // to apply the normal behavior when click on cut
+                                      onCut: () =>
+                                          editableTextState.cutSelection(
+                                              SelectionChangedCause.toolbar),
+                                      onPaste: () {
+                                        // HERE will be called when the paste button is clicked in the toolbar
+                                        // apply your own logic here
+
+                                        // to apply the normal behavior when click on paste (add in input and close toolbar)
+                                        editableTextState.pasteText(
+                                            SelectionChangedCause.tap);
+                                      },
+                                      // to apply the normal behavior when click on select all
+                                      onSelectAll: () =>
+                                          editableTextState.selectAll(
+                                              SelectionChangedCause.toolbar),
+                                      onLookUp: () {},
+                                      onSearchWeb: () {},
+                                      onShare: () {},
+                                      onLiveTextInput: () {},
+                                    );
+                                  },
+                                  toolbarOptions: ToolbarOptions(
+                                      copy: false,
+                                      paste: false,
+                                      cut: false,
+                                      selectAll: true),
                                   style: GoogleFonts.spaceGrotesk(),
                                   maxLines: 12, //11,
                                   decoration: const InputDecoration(

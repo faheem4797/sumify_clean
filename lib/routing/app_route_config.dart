@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
+import 'package:sumify_clean/features/article/presentation/pages/comments.dart';
 import 'package:sumify_clean/features/article/presentation/pages/home_screen.dart';
 import 'package:sumify_clean/features/article/presentation/pages/report_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/forgot_password_screen.dart';
@@ -96,12 +97,7 @@ class MyAppRouter {
                   name: AppRouteConstants.commentsRouteName,
                   path: AppRouteConstants.commentsRoutePath,
                   pageBuilder: (context, state) {
-                    return const MaterialPage(
-                        child: Scaffold(
-                      body: Center(
-                        child: Text('Comments'),
-                      ),
-                    ));
+                    return const MaterialPage(child: CommentsScreen());
                   },
                 ),
               ],
