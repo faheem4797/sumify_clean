@@ -26,6 +26,7 @@ Future<void> initDependencies() async {
       () => ConnectionCheckerImpl(serviceLocator()));
 
   await _initAuth();
+  await _initArticle();
   await _initProfile();
   await _initContactUs();
 }
@@ -50,6 +51,19 @@ Future<void> _initAuth() async {
     ..registerLazySingleton(() => SignUpBloc())
     ..registerLazySingleton(() => SignInBloc())
     ..registerLazySingleton(() => ForgotPasswordBloc());
+}
+
+Future<void> _initArticle() async {
+  serviceLocator
+    ..registerFactory<ArticleRemoteDatasource>(
+        () => ArticleRemoteDatasourceImpl())
+    ..registerFactory<ArticleRepository>(() => ArticleRepositoryImpl(
+          connectionChecker: serviceLocator(),
+          articleRemoteDatasource: serviceLocator(),
+        ))
+    ..registerFactory(() => SaveAsPdf(articleRepository: serviceLocator()))
+    ..registerFactory(() => SetArticle(articleRepository: serviceLocator()))
+    ..registerLazySingleton(() => ArticleBloc(setArticle: serviceLocator()));
 }
 
 Future<void> _initProfile() async {

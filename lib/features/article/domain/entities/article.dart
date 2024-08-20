@@ -4,11 +4,14 @@ class Article {
   final String summary;
   final String report;
   final List<String> comments;
-  Article({
+  const Article({
     required this.article,
     required this.title,
     required this.summary,
     required this.report,
     required this.comments,
   });
+
+  static const empty =
+      Article(article: '', title: '', summary: '', report: '', comments: []);
 }

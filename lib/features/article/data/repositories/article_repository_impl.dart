@@ -56,14 +56,19 @@ class ArticleRepositoryImpl implements ArticleRepository {
               0, 0, page.getClientSize().width, page.getClientSize().height));
       int randomNumber = Random().nextInt(100) + 100;
 
-      await saveDocument(name: '$fileName$randomNumber.pdf', pdf: document);
-      return right('Successfully saved as pdf.');
+      final message =
+          await saveDocument(name: '$fileName$randomNumber.pdf', pdf: document);
+      if (message == 'Success') {
+        return right('Successfully saved as pdf.');
+      } else {
+        return left(Failure());
+      }
     } catch (e) {
       return left(Failure(e.toString()));
     }
   }
 
-  static Future<String> saveDocument({
+  Future<String> saveDocument({
     required String name,
     required PdfDocument pdf,
   }) async {

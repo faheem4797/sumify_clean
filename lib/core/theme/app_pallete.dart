@@ -8,6 +8,7 @@ class AppPallete {
   static const kBlackColor = Colors.black;
   static const kDarkerTealColor = Color(0xff184046);
   static const kShadowColor = Colors.black38;
+  static const kLighterTealColor = Color.fromARGB(255, 168, 226, 235);
   //
   //
 

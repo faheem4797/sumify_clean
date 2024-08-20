@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
+import 'package:sumify_clean/features/article/presentation/pages/home_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/forgot_password_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_in_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/splash_screen.dart';
@@ -72,12 +73,7 @@ class MyAppRouter {
                   name: AppRouteConstants.homeRouteName,
                   path: AppRouteConstants.homeRoutePath,
                   pageBuilder: (context, state) {
-                    return const MaterialPage(
-                        child: Scaffold(
-                      body: Center(
-                        child: Text('Home'),
-                      ),
-                    ));
+                    return const MaterialPage(child: HomeScreen());
                   },
                 ),
               ],
@@ -137,19 +133,19 @@ class MyAppRouter {
               ],
             ),
           ]),
-      GoRoute(
-        // name: AppRouteConstants.homeRouteName,
-        // path: AppRouteConstants.homeRoutePath,
-        path: '/homePath',
-        pageBuilder: (context, state) {
-          return const MaterialPage(
-              child: Scaffold(
-            body: Center(
-              child: Text('Home'),
-            ),
-          ));
-        },
-      ),
+      // GoRoute(
+      //   // name: AppRouteConstants.homeRouteName,
+      //   // path: AppRouteConstants.homeRoutePath,
+      //   path: '/homePath',
+      //   pageBuilder: (context, state) {
+      //     return const MaterialPage(
+      //         child: Scaffold(
+      //       body: Center(
+      //         child: Text('Home'),
+      //       ),
+      //     ));
+      //   },
+      // ),
     ],
     redirect: (context, state) {
       debugPrint(state.matchedLocation);

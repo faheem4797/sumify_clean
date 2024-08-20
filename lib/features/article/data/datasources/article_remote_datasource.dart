@@ -43,6 +43,7 @@ class ArticleRemoteDatasourceImpl implements ArticleRemoteDatasource {
 
       return reply;
     } else {
+      print(response.body);
       throw Exception('Failed to perform OpenAI Chat Completion');
     }
   }
