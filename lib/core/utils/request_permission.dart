@@ -8,7 +8,6 @@ Future<bool> requestPermission(Permission permission) async {
   } else {
     debugPrint(' not granted');
     var result = await permission.request();
-    print(result);
 
     debugPrint(' requested');
     if (result == PermissionStatus.granted) {
