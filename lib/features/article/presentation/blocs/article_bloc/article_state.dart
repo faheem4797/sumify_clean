@@ -12,6 +12,7 @@ final class ArticleState extends Equatable {
     this.reportStatus = ReportSaveStatus.initial,
     this.errorMessage,
     this.reportErrorMessage,
+    this.reportSuccessMessage,
   });
   final String articleText;
   final Article article;
@@ -19,6 +20,7 @@ final class ArticleState extends Equatable {
   final String? errorMessage;
   final ReportSaveStatus reportStatus;
   final String? reportErrorMessage;
+  final String? reportSuccessMessage;
 
   @override
   List<Object?> get props => [
@@ -27,7 +29,8 @@ final class ArticleState extends Equatable {
         status,
         errorMessage,
         reportStatus,
-        reportErrorMessage
+        reportErrorMessage,
+        reportSuccessMessage
       ];
 
   ArticleState copyWith({
@@ -37,6 +40,7 @@ final class ArticleState extends Equatable {
     String? errorMessage,
     ReportSaveStatus? reportStatus,
     String? reportErrorMessage,
+    String? reportSuccessMessage,
   }) {
     return ArticleState(
       articleText: articleText ?? this.articleText,
@@ -45,6 +49,7 @@ final class ArticleState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       reportStatus: reportStatus ?? this.reportStatus,
       reportErrorMessage: reportErrorMessage ?? this.reportErrorMessage,
+      reportSuccessMessage: reportSuccessMessage ?? this.reportSuccessMessage,
     );
   }
 }

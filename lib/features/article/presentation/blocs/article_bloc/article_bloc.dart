@@ -56,6 +56,7 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
           reportErrorMessage: l.message)),
       (r) => emit(state.copyWith(
         reportStatus: ReportSaveStatus.success,
+        reportSuccessMessage: r,
       )),
     );
     await Future.delayed(const Duration(milliseconds: 200));

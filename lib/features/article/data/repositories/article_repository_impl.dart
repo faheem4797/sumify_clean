@@ -45,7 +45,8 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<Either<Failure, String>> saveAsPdf(
       {required String report, required String fileName}) async {
     try {
-      final permissionChecker = await requestPermission(Permission.storage);
+      final permissionChecker =
+          await requestPermission(Permission.manageExternalStorage);
       if (permissionChecker) {
         final PdfDocument document = PdfDocument();
         PdfPage page = document.pages.add();
@@ -86,6 +87,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
       if (Platform.isAndroid) {
         final dir = await ExternalPath.getExternalStoragePublicDirectory(
             ExternalPath.DIRECTORY_DOCUMENTS);
+
         // final dir = await getApplicationDocumentsDirectory();
 
         debugPrint(dir);
@@ -98,7 +100,6 @@ class ArticleRepositoryImpl implements ArticleRepository {
         debugPrint('asdasd');
         await file.writeAsBytes(bytes);
 
-        // reterning the file to the top most method which generates text.
         return 'Success';
       }
       //FOR IOS

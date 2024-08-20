@@ -36,6 +36,8 @@ class ReportScreen extends StatelessWidget {
           listener: (context, state) {
             if (state.reportStatus == ReportSaveStatus.failure) {
               showSnackBar(context, state.reportErrorMessage!);
+            } else if (state.reportStatus == ReportSaveStatus.success) {
+              showSnackBar(context, state.reportSuccessMessage!);
             }
           },
           builder: (context, state) {
@@ -120,46 +122,14 @@ class ReportScreen extends StatelessWidget {
                   height: 50.h,
                   width: 150.w,
                   child: ElevatedButton(
-                      onPressed:
-                          // state.article.report == '' ||
-                          state.reportStatus == ReportSaveStatus.loading
-                              ? null
-                              : () async {
-                                  context
-                                      .read<ArticleBloc>()
-                                      .add(SaveAsPdfButtonPressed());
-                                }
-                      //  () async {
-                      //         setState(() {
-                      //           isSaving = true;
-                      //         });
-                      //         String s = articleProvider.article.title!;
-                      //         String regex =
-                      //             r'[^\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}\s]+';
-                      //         String formattedTitle =
-                      //             s.replaceAll(RegExp(regex, unicode: true), '');
-                      //         final message = await PdfApi.saveAsPdf(
-                      //             articleProvider.article.report!, formattedTitle);
-                      //         setState(() {
-                      //           isSaving = false;
-                      //         });
-                      //         if (message.contains('Success')) {
-                      //           if (!context.mounted) return;
-                      //           ScaffoldMessenger.of(context).showSnackBar(
-                      //             const SnackBar(
-                      //               content: Text('Report Saved Successfully.'),
-                      //             ),
-                      //           );
-                      //         } else {
-                      //           if (!context.mounted) return;
-                      //           ScaffoldMessenger.of(context).showSnackBar(
-                      //             SnackBar(
-                      //               content: Text(message),
-                      //             ),
-                      //           );
-                      //         }
-                      //  },
-                      ,
+                      onPressed: state.article.report == '' ||
+                              state.reportStatus == ReportSaveStatus.loading
+                          ? null
+                          : () async {
+                              context
+                                  .read<ArticleBloc>()
+                                  .add(SaveAsPdfButtonPressed());
+                            },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.r),
