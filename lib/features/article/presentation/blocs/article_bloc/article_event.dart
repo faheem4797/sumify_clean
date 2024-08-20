@@ -15,3 +15,5 @@ class ArticleTextChanged extends ArticleEvent {
   @override
   List<Object> get props => [articleText];
 }
+
+class SaveAsPdfButtonPressed extends ArticleEvent {}

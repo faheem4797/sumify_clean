@@ -4,10 +4,12 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
+import 'package:sumify_clean/core/utils/request_permission.dart';
 import 'package:sumify_clean/features/article/data/datasources/article_remote_datasource.dart';
 import 'package:sumify_clean/features/article/domain/entities/article.dart';
 import 'package:sumify_clean/features/article/domain/repositories/article_repository.dart';
@@ -43,25 +45,30 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<Either<Failure, String>> saveAsPdf(
       {required String report, required String fileName}) async {
     try {
-      final PdfDocument document = PdfDocument();
-      PdfPage page = document.pages.add();
+      final permissionChecker = await requestPermission(Permission.storage);
+      if (permissionChecker) {
+        final PdfDocument document = PdfDocument();
+        PdfPage page = document.pages.add();
 
-      document.pageSettings.size = PdfPageSize.a4;
+        document.pageSettings.size = PdfPageSize.a4;
 
-      PdfFont font = PdfStandardFont(PdfFontFamily.timesRoman, 18);
+        PdfFont font = PdfStandardFont(PdfFontFamily.timesRoman, 18);
 
-      PdfTextElement(text: report, font: font).draw(
-          page: page,
-          bounds: Rect.fromLTWH(
-              0, 0, page.getClientSize().width, page.getClientSize().height));
-      int randomNumber = Random().nextInt(100) + 100;
+        PdfTextElement(text: report, font: font).draw(
+            page: page,
+            bounds: Rect.fromLTWH(
+                0, 0, page.getClientSize().width, page.getClientSize().height));
+        int randomNumber = Random().nextInt(100) + 100;
 
-      final message =
-          await saveDocument(name: '$fileName$randomNumber.pdf', pdf: document);
-      if (message == 'Success') {
-        return right('Successfully saved as pdf.');
+        final message = await saveDocument(
+            name: '$fileName$randomNumber.pdf', pdf: document);
+        if (message == 'Success') {
+          return right('Successfully saved as pdf.');
+        } else {
+          return left(Failure());
+        }
       } else {
-        return left(Failure());
+        return left(Failure('Permission denied!'));
       }
     } catch (e) {
       return left(Failure(e.toString()));
@@ -79,8 +86,16 @@ class ArticleRepositoryImpl implements ArticleRepository {
       if (Platform.isAndroid) {
         final dir = await ExternalPath.getExternalStoragePublicDirectory(
             ExternalPath.DIRECTORY_DOCUMENTS);
+        // final dir = await getApplicationDocumentsDirectory();
+
         debugPrint(dir);
-        final file = File('$dir/$name');
+        debugPrint('$dir/$name');
+
+        final file = await File('$dir/$name').create(recursive: true);
+
+        debugPrint(file.existsSync().toString());
+
+        debugPrint('asdasd');
         await file.writeAsBytes(bytes);
 
         // reterning the file to the top most method which generates text.

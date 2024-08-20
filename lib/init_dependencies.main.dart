@@ -63,7 +63,8 @@ Future<void> _initArticle() async {
         ))
     ..registerFactory(() => SaveAsPdf(articleRepository: serviceLocator()))
     ..registerFactory(() => SetArticle(articleRepository: serviceLocator()))
-    ..registerLazySingleton(() => ArticleBloc(setArticle: serviceLocator()));
+    ..registerLazySingleton(() =>
+        ArticleBloc(setArticle: serviceLocator(), saveAsPdf: serviceLocator()));
 }
 
 Future<void> _initProfile() async {

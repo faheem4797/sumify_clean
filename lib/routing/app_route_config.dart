@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/features/article/presentation/pages/home_screen.dart';
+import 'package:sumify_clean/features/article/presentation/pages/report_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/forgot_password_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/sign_in_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/splash_screen.dart';
@@ -84,12 +85,7 @@ class MyAppRouter {
                   name: AppRouteConstants.reportRouteName,
                   path: AppRouteConstants.reportRoutePath,
                   pageBuilder: (context, state) {
-                    return const MaterialPage(
-                        child: Scaffold(
-                      body: Center(
-                        child: Text('Report'),
-                      ),
-                    ));
+                    return const MaterialPage(child: ReportScreen());
                   },
                 ),
               ],
