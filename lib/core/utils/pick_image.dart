@@ -9,12 +9,10 @@ class PickedImage {
   PickedImage({required this.file, required this.name});
 }
 
-Future<PickedImage?> pickImage() async {
+Future<PickedImage?> pickImage({required ImagePicker imagePicker}) async {
   try {
-    final xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final xFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if (xFile != null) {
-      // xFile.name;
-      // return File(xFile.path);
       final file = File(xFile.path);
       final name = xFile.name;
       return PickedImage(file: file, name: name);

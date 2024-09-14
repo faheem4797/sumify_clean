@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
 import 'package:sumify_clean/core/common/widgets/loader.dart';
 import 'package:sumify_clean/core/theme/app_pallete.dart';
@@ -141,7 +142,9 @@ class ProfileScreen extends StatelessWidget {
                                                           child: InkWell(
                                                             onTap: () async {
                                                               final pickedImage =
-                                                                  await pickImage();
+                                                                  await pickImage(
+                                                                      imagePicker:
+                                                                          ImagePicker());
                                                               if (pickedImage !=
                                                                       null &&
                                                                   context
