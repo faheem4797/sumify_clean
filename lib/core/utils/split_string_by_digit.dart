@@ -1,6 +1,5 @@
 List<String> splitStringByDigit(String input) {
   List<String> result = input.split(RegExp(r'\d+\.'));
-  result.removeWhere((str) => str.isEmpty);
 
   List<String> trimmedList = [];
 

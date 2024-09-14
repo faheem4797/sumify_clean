@@ -5,16 +5,17 @@ void main() {
   group('splitStringByDigit', () {
     test('should split string by digits and trim spaces', () {
       // Arrange
-      const input = '1. First item 2. Second item  3. Third item';
+      const input = '1. First comment 2. Second comment  3. Third comment';
 
       // Act
       final result = splitStringByDigit(input);
 
       // Assert
-      expect(result, ['First item', 'Second item', 'Third item']);
+      expect(result, ['First comment', 'Second comment', 'Third comment']);
     });
 
-    test('should return an empty list when input has no digits', () {
+    test('should return a list with only one entry when input has no digits',
+        () {
       // Arrange
       const input = 'No digits here';
 
@@ -27,13 +28,13 @@ void main() {
 
     test('should handle multiple spaces and empty strings', () {
       // Arrange
-      const input = '1.   First item   2.  Second item   3.  ';
+      const input = '1.   First comment   2.  Second comment   3.  ';
 
       // Act
       final result = splitStringByDigit(input);
 
       // Assert
-      expect(result, ['First item', 'Second item']);
+      expect(result, ['First comment', 'Second comment']);
     });
 
     test('should return an empty list when input is empty', () {
