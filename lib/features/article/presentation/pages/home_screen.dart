@@ -120,7 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onLiveTextInput: () {},
                                     );
                                   },
-                                  toolbarOptions: ToolbarOptions(
+                                  // contextMenuBuilder
+                                  toolbarOptions: const ToolbarOptions(
                                       copy: false,
                                       paste: false,
                                       cut: false,

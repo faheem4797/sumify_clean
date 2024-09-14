@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sumify_clean/core/common/cubits/app_user_cubit.dart';
-import 'package:sumify_clean/features/article/presentation/pages/comments.dart';
+import 'package:sumify_clean/features/article/presentation/pages/comments_screen.dart';
 import 'package:sumify_clean/features/article/presentation/pages/home_screen.dart';
 import 'package:sumify_clean/features/article/presentation/pages/report_screen.dart';
 import 'package:sumify_clean/features/authentication/presentation/pages/forgot_password_screen.dart';

@@ -71,8 +71,6 @@ class ArticleRemoteDatasourceImpl implements ArticleRemoteDatasource {
           comments: comments);
 
       return article;
-    } on Exception catch (e) {
-      throw ServerException(e.toString());
     } catch (e) {
       throw ServerException(e.toString());
     }
