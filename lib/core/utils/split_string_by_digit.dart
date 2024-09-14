@@ -8,6 +8,7 @@ List<String> splitStringByDigit(String input) {
     String trimmedString = str.trim();
     trimmedList.add(trimmedString);
   }
+  trimmedList.removeWhere((str) => str.isEmpty);
 
   return trimmedList;
 }
