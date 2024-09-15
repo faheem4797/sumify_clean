@@ -20,9 +20,13 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 class ArticleRepositoryImpl implements ArticleRepository {
   final ConnectionChecker connectionChecker;
   final ArticleRemoteDatasource articleRemoteDatasource;
+  final PermissionsService permissionsService;
 
-  ArticleRepositoryImpl(
-      {required this.connectionChecker, required this.articleRemoteDatasource});
+  ArticleRepositoryImpl({
+    required this.connectionChecker,
+    required this.articleRemoteDatasource,
+    required this.permissionsService,
+  });
 
   @override
   Future<Either<Failure, Article>> setArticle({required String article}) async {
@@ -45,8 +49,9 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<Either<Failure, String>> saveAsPdf(
       {required String report, required String fileName}) async {
     try {
-      final permissionChecker =
-          await requestPermission(Permission.manageExternalStorage);
+      final permissionChecker = await requestPermission(
+          permissionsService, Permission.manageExternalStorage);
+
       if (permissionChecker) {
         final PdfDocument document = PdfDocument();
         PdfPage page = document.pages.add();
