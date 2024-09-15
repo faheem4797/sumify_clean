@@ -14,6 +14,7 @@ import 'package:sumify_clean/core/utils/show_snackbar.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/delete_account_bloc/delete_account_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
+import 'package:sumify_clean/init_dependencies.dart';
 import 'package:sumify_clean/routing/app_route_constants.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -144,7 +145,8 @@ class ProfileScreen extends StatelessWidget {
                                                               final pickedImage =
                                                                   await pickImage(
                                                                       imagePicker:
-                                                                          ImagePicker());
+                                                                          serviceLocator<
+                                                                              ImagePicker>());
                                                               if (pickedImage !=
                                                                       null &&
                                                                   context

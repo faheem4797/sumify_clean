@@ -3,19 +3,19 @@ import 'package:permission_handler/permission_handler.dart';
 
 Future<bool> requestPermission(Permission permission) async {
   if (await permission.isGranted) {
-    debugPrint('granted');
+    // debugPrint('granted');
     return true;
   } else {
-    debugPrint(' not granted');
+    // debugPrint(' not granted');
     var result = await permission.request();
 
-    debugPrint(' requested');
+    // debugPrint(' requested');
     if (result == PermissionStatus.granted) {
-      debugPrint(' granted now');
+      // debugPrint(' granted now');
       return true;
     } else {
       openAppSettings();
-      debugPrint(' not granted bruh');
+      // debugPrint(' not granted bruh');
       return false;
     }
   }

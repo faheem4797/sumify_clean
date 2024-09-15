@@ -14,6 +14,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => FirebaseStorage.instance);
 
   serviceLocator.registerFactory(() => InternetConnection());
+  serviceLocator.registerLazySingleton(() => ImagePicker());
   //core
   // serviceLocator
   //   ..registerFactory<SignoutRemoteDataSource>(

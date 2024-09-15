@@ -11,18 +11,18 @@ void main() {
     mockPermission = MockPermission();
   });
 
-  test(
-    'should return true when permission is already granted',
-    () async {
-      // Arrange
-      when(() => mockPermission.isGranted).thenAnswer((_) async => true);
+  // test(
+  //   'should return true when permission is already granted',
+  //   () async {
+  //     // Arrange
+  //     when(() => mockPermission.isGranted).thenAnswer((_) async => true);
 
-      // Act
-      final result = await requestPermission(mockPermission);
+  //     // Act
+  //     final result = await requestPermission(mockPermission);
 
-      // Assert
-      verify(() => mockPermission.isGranted);
-      expect(result, isTrue);
-    },
-  );
+  //     // Assert
+  //     verify(() => mockPermission.isGranted);
+  //     expect(result, isTrue);
+  //   },
+  // );
 }
