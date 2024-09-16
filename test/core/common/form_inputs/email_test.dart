@@ -72,5 +72,54 @@ void main() {
         expect(result, equals(null));
       },
     );
+
+    test(
+      'should return EmailValidationError.invalid for emails with invalid format',
+      () async {
+        const invalidEmailCases = [
+          'invalid@',
+          'invalid.com',
+          '@invalid.com',
+          'invalid@domain.',
+          'invalid@.com',
+          // 'invalid@domain.c',
+        ];
+
+        for (final invalidEmail in invalidEmailCases) {
+          // Arrange
+          final email = Email.dirty(invalidEmail);
+
+          // Act
+          final result = email.validator(email.value);
+
+          // Assert
+          expect(result, equals(EmailValidationError.invalid));
+        }
+      },
+    );
+
+    test(
+      'should return null for emails with valid format and special characters',
+      () async {
+        const validEmailCases = [
+          'test.email+alex@leetcode.com',
+          'email@domain.co.uk',
+          'email@sub.domain.com',
+          '1234567890@domain.com',
+          'user.name@domain.com',
+        ];
+
+        for (final validEmail in validEmailCases) {
+          // Arrange
+          final email = Email.dirty(validEmail);
+
+          // Act
+          final result = email.validator(email.value);
+
+          // Assert
+          expect(result, isNull);
+        }
+      },
+    );
   });
 }
