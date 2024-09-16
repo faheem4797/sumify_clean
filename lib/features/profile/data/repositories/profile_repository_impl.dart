@@ -26,7 +26,7 @@ class ProfileRepositpryImpl implements ProfileRepository {
       required String fileName}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
 
       String newProfilePictureUrl =
@@ -55,7 +55,7 @@ class ProfileRepositpryImpl implements ProfileRepository {
   Future<Either<Failure, String>> signOutUser() async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
       final messageString = await profileRemoteDataSource.signOutUser();
 
@@ -73,7 +73,7 @@ class ProfileRepositpryImpl implements ProfileRepository {
     if (email == appUser.email) {
       try {
         if (!await connectionChecker.isConnected) {
-          return left(Failure(Constants.noConnectionErrorMessage));
+          return left(const Failure(Constants.noConnectionErrorMessage));
         }
         await profileRemoteDataSource.deleteUserAccount(
             email: email, password: password);
@@ -90,6 +90,6 @@ class ProfileRepositpryImpl implements ProfileRepository {
         return left(Failure(e.toString()));
       }
     }
-    return left(Failure('Wrong Email!'));
+    return left(const Failure('Wrong Email!'));
   }
 }

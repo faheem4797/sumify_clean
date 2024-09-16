@@ -32,7 +32,7 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<Either<Failure, Article>> setArticle({required String article}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
       final articleModel =
           await articleRemoteDatasource.setUserArticle(articleText: article);
@@ -71,10 +71,10 @@ class ArticleRepositoryImpl implements ArticleRepository {
         if (message == 'Success') {
           return right('Successfully saved as pdf.');
         } else {
-          return left(Failure());
+          return left(const Failure());
         }
       } else {
-        return left(Failure('Permission denied!'));
+        return left(const Failure('Permission denied!'));
       }
     } catch (e) {
       return left(Failure(e.toString()));

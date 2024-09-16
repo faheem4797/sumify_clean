@@ -23,7 +23,7 @@ class ContactUsRepositoryImpl implements ContactUsRepository {
       required String message}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
 
       final contactUsModel = ContactUsModel(

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:sumify_clean/core/domain/entities/app_user.dart';
 
 class UserModel extends AppUser {
-  UserModel({
+  const UserModel({
     required super.id,
     required super.name,
     required super.email,

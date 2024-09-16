@@ -21,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
       {required String email}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
       final message =
           await authRemoteDatasource.forgotUserPassword(email: email);
@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AppUser>> currentUser() async {
     final user = authRemoteDatasource.getCurrentUser;
     if (user == null) {
-      return left(Failure('User not logged in'));
+      return left(const Failure('User not logged in'));
     }
     if (!await connectionChecker.isConnected) {
       // if (user.displayName == null || user.email == null) {
@@ -50,7 +50,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final currentUserData =
         await authRemoteDatasource.getUserData(id: user.uid);
     if (currentUserData == null) {
-      return left(Failure('Failed to retreieve user data'));
+      return left(const Failure('Failed to retreieve user data'));
     }
     return right(currentUserData);
   }
@@ -60,14 +60,14 @@ class AuthRepositoryImpl implements AuthRepository {
       {required String email, required String password}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
       final String userId = await authRemoteDatasource
           .loginWithEmailAndPassword(email: email, password: password);
       final UserModel? userModel =
           await authRemoteDatasource.getUserData(id: userId);
       if (userModel == null) {
-        return left(Failure('User is null'));
+        return left(const Failure('User is null'));
       } else {
         return right(userModel);
       }
@@ -85,7 +85,7 @@ class AuthRepositoryImpl implements AuthRepository {
       required String password}) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionErrorMessage));
+        return left(const Failure(Constants.noConnectionErrorMessage));
       }
       final String userId = await authRemoteDatasource
           .signupWithEmailAndPassword(email: email, password: password);
