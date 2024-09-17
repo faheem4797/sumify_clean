@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:sumify_clean/core/domain/entities/app_user.dart';
 
@@ -9,21 +9,6 @@ class UserModel extends AppUser {
     required super.email,
     super.pictureFilePathFromFirebase,
   });
-
-  UserModel copyWith({
-    String? id,
-    String? name,
-    String? email,
-    String? pictureFilePathFromFirebase,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      pictureFilePathFromFirebase:
-          pictureFilePathFromFirebase ?? this.pictureFilePathFromFirebase,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -43,8 +28,23 @@ class UserModel extends AppUser {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  // String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source));
+  // factory UserModel.fromJson(String source) =>
+  //     UserModel.fromMap(json.decode(source));
+
+  // UserModel copyWith({
+  //   String? id,
+  //   String? name,
+  //   String? email,
+  //   String? pictureFilePathFromFirebase,
+  // }) {
+  //   return UserModel(
+  //     id: id ?? this.id,
+  //     name: name ?? this.name,
+  //     email: email ?? this.email,
+  //     pictureFilePathFromFirebase:
+  //         pictureFilePathFromFirebase ?? this.pictureFilePathFromFirebase,
+  //   );
+  // }
 }
