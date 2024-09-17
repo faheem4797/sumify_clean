@@ -12,7 +12,7 @@ abstract interface class AuthRemoteDatasource {
       {required String email, required String password});
   Future<String> forgotUserPassword({required String email});
 
-  Future<UserModel?> getUserData({required String id});
+  Future<UserModel> getUserData({required String id});
   Future<void> setUserData({required UserModel userModel});
 }
 
@@ -25,7 +25,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   });
 
   @override
-  Future<UserModel?> getUserData({required String id}) async {
+  Future<UserModel> getUserData({required String id}) async {
     try {
       final userDoc = await usersCollection.doc(id).get();
 

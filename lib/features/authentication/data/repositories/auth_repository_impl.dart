@@ -10,7 +10,7 @@ import 'package:sumify_clean/core/domain/entities/app_user.dart';
 import 'package:sumify_clean/features/authentication/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRemoteDatasource authRemoteDatasource;
+  final AuthRemoteDatasource authRemoteDatasource;
   final ConnectionChecker connectionChecker;
 
   AuthRepositoryImpl(
@@ -26,10 +26,10 @@ class AuthRepositoryImpl implements AuthRepository {
       final message =
           await authRemoteDatasource.forgotUserPassword(email: email);
       return right(message);
-    } on SignInWithEmailAndPasswordFailure catch (e) {
+    } on SendPasswordResetEmailFailure catch (e) {
       return left(Failure(e.message));
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 
@@ -47,11 +47,12 @@ class AuthRepositoryImpl implements AuthRepository {
           id: user.uid, name: user.displayName ?? '', email: user.email ?? ''));
     }
 
-    final currentUserData =
+    final UserModel currentUserData =
         await authRemoteDatasource.getUserData(id: user.uid);
-    if (currentUserData == null) {
-      return left(const Failure('Failed to retreieve user data'));
-    }
+    //TODO: FirebaseDataFailure can be thrown from here
+    // if (currentUserData == null) {
+    //   return left(const Failure('Failed to retreieve user data'));
+    // }
     return right(currentUserData);
   }
 
@@ -64,17 +65,19 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       final String userId = await authRemoteDatasource
           .loginWithEmailAndPassword(email: email, password: password);
-      final UserModel? userModel =
+      final UserModel userModel =
           await authRemoteDatasource.getUserData(id: userId);
-      if (userModel == null) {
-        return left(const Failure('User is null'));
-      } else {
-        return right(userModel);
-      }
+      //TODO: FirebaseDataFailure can be thrown from here
+
+      // if (userModel == null) {
+      //   return left(const Failure('User is null'));
+      // } else {
+      return right(userModel);
+      // }
     } on SignInWithEmailAndPasswordFailure catch (e) {
       return left(Failure(e.message));
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 
@@ -101,8 +104,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(e.message));
     } on FirebaseDataFailure catch (e) {
       return left(Failure(e.message));
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 }
