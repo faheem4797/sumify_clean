@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
@@ -38,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final user = authRemoteDatasource.getCurrentUser;
       if (user == null) {
-        return left(const Failure('User not logged in'));
+        return left(const Failure(Constants.nullUserErrorMessage));
       }
       if (!await connectionChecker.isConnected) {
         return right(UserModel(
@@ -53,6 +54,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return right(currentUserData);
     } on FirebaseDataFailure catch (e) {
       return left(Failure(e.message));
+    } on FirebaseAuthException catch (e) {
+      return left(Failure(e.message ?? const Failure().message));
     } catch (_) {
       return left(const Failure());
     }

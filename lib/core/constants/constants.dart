@@ -57,4 +57,7 @@ class Constants {
   // Define the comments promopt
   static const commentsPrompt =
       'Generate thoughtful and relevant comments to post in response to the following article or social media post. Your comments should be logical and directly related to the subject matter of the article or post. Please provide at least three comments that would be suitable for posting in the comments section. Keep your comments concise and natural-sounding. Write comments in a list in numerical order and do not use any digits within the comments.';
+
+//FAILURE TEXTS
+  static const nullUserErrorMessage = 'User not logged in';
 }
