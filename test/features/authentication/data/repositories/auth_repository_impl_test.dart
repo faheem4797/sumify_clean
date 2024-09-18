@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -6,20 +7,26 @@ import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
+import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
 import 'package:sumify_clean/features/authentication/data/repositories/auth_repository_impl.dart';
 
 class MockAuthRemoteDatasource extends Mock implements AuthRemoteDatasource {}
 
 class MockConnectionChecker extends Mock implements ConnectionChecker {}
 
+class MockAuthUser extends Mock implements User {}
+
 void main() {
   late MockAuthRemoteDatasource mockAuthRemoteDatasource;
   late MockConnectionChecker mockConnectionChecker;
+  late MockAuthUser mockAuthUser;
   late AuthRepositoryImpl authRepositoryImpl;
 
   setUp(() {
     mockAuthRemoteDatasource = MockAuthRemoteDatasource();
     mockConnectionChecker = MockConnectionChecker();
+    mockAuthUser = MockAuthUser();
+
     authRepositoryImpl = AuthRepositoryImpl(
         authRemoteDatasource: mockAuthRemoteDatasource,
         connectionChecker: mockConnectionChecker);
@@ -27,6 +34,14 @@ void main() {
 
   void setUpMockConnectionToTrue() {
     when(() => mockConnectionChecker.isConnected).thenAnswer((_) async => true);
+  }
+
+  void setUpMockAuthUserToUser() {
+    when(() => mockAuthRemoteDatasource.getCurrentUser)
+        .thenReturn(mockAuthUser);
+    when(() => mockAuthUser.uid).thenReturn('123');
+    when(() => mockAuthUser.displayName).thenReturn('Test User');
+    when(() => mockAuthUser.email).thenReturn('test@example.com');
   }
 
   group('forgotUserPassword', () {
@@ -119,6 +134,35 @@ void main() {
         verifyNever(
             () => mockAuthRemoteDatasource.forgotUserPassword(email: tEmail));
         verifyNoMoreInteractions(mockConnectionChecker);
+      },
+    );
+  });
+
+  group('currentUser', () {
+    const tAppUserModel = UserModel(
+      id: '123',
+      name: 'Test User',
+      email: 'test@example.com',
+      pictureFilePathFromFirebase: null,
+    );
+    test(
+      'should return AppUser when user is logged in, internet is connected and correct user data is retrieved from Database',
+      () async {
+        //arrange
+        setUpMockConnectionToTrue();
+        setUpMockAuthUserToUser();
+        when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
+            .thenAnswer((_) async => tAppUserModel);
+
+        //act
+        final result = await authRepositoryImpl.currentUser();
+
+        //assert
+        expect(result, const Right(tAppUserModel));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.getCurrentUser).called(1);
+        verify(() => mockAuthRemoteDatasource.getUserData(id: tAppUserModel.id))
+            .called(1);
       },
     );
   });

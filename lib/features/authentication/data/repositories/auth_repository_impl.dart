@@ -35,25 +35,27 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, AppUser>> currentUser() async {
-    final user = authRemoteDatasource.getCurrentUser;
-    if (user == null) {
-      return left(const Failure('User not logged in'));
-    }
-    if (!await connectionChecker.isConnected) {
-      // if (user.displayName == null || user.email == null) {
-      //   return left(Failure('User not logged in'));
-      // }
-      return right(UserModel(
-          id: user.uid, name: user.displayName ?? '', email: user.email ?? ''));
-    }
+    try {
+      final user = authRemoteDatasource.getCurrentUser;
+      if (user == null) {
+        return left(const Failure('User not logged in'));
+      }
+      if (!await connectionChecker.isConnected) {
+        return right(UserModel(
+            id: user.uid,
+            name: user.displayName ?? '',
+            email: user.email ?? ''));
+      }
 
-    final UserModel currentUserData =
-        await authRemoteDatasource.getUserData(id: user.uid);
-    //TODO: FirebaseDataFailure can be thrown from here
-    // if (currentUserData == null) {
-    //   return left(const Failure('Failed to retreieve user data'));
-    // }
-    return right(currentUserData);
+      final UserModel currentUserData =
+          await authRemoteDatasource.getUserData(id: user.uid);
+
+      return right(currentUserData);
+    } on FirebaseDataFailure catch (e) {
+      return left(Failure(e.message));
+    } catch (_) {
+      return left(const Failure());
+    }
   }
 
   @override
