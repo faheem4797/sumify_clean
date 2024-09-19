@@ -18,16 +18,18 @@ abstract interface class AuthRemoteDatasource {
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final FirebaseAuth firebaseAuth;
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+  // final usersCollection = FirebaseFirestore.instance.collection('users');
+  final FirebaseFirestore firebaseFirestore;
 
   AuthRemoteDatasourceImpl({
     required this.firebaseAuth,
+    required this.firebaseFirestore,
   });
 
   @override
   Future<UserModel> getUserData({required String id}) async {
     try {
-      final userDoc = await usersCollection.doc(id).get();
+      final userDoc = await firebaseFirestore.collection('users').doc(id).get();
 
       if (userDoc.data() != null) {
         return UserModel.fromMap(userDoc.data()!);
@@ -44,7 +46,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   @override
   Future<void> setUserData({required UserModel userModel}) async {
     try {
-      return await usersCollection.doc(userModel.id).set(userModel.toMap());
+      return await firebaseFirestore
+          .collection('users')
+          .doc(userModel.id)
+          .set(userModel.toMap());
+
+      // return await usersCollection.doc(userModel.id).set(userModel.toMap());
     } on FirebaseException catch (e) {
       throw FirebaseDataFailure.fromCode(e.code);
     } catch (_) {
