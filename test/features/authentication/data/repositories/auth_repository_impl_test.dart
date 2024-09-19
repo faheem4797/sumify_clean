@@ -17,6 +17,8 @@ class MockConnectionChecker extends Mock implements ConnectionChecker {}
 
 class MockAuthUser extends Mock implements User {}
 
+class FakeUserModel extends Fake implements UserModel {}
+
 void main() {
   late MockAuthRemoteDatasource mockAuthRemoteDatasource;
   late MockConnectionChecker mockConnectionChecker;
@@ -31,6 +33,8 @@ void main() {
     authRepositoryImpl = AuthRepositoryImpl(
         authRemoteDatasource: mockAuthRemoteDatasource,
         connectionChecker: mockConnectionChecker);
+
+    registerFallbackValue(FakeUserModel());
   });
 
   void setUpMockConnectionToBool(bool trueOrFalse) {
@@ -74,6 +78,29 @@ void main() {
   void setUpGetUserDataToFirebaseDataFailure() {
     when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
         .thenThrow(const FirebaseDataFailure());
+  }
+
+  void setUpSignUpToUID(String tId) {
+    when(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+        email: any(named: 'email'),
+        password: any(named: 'password'))).thenAnswer((_) async => tId);
+  }
+
+  void verifySetUserDataToCheckProperties(
+      String tId, String tName, String tEmail, String tPicturePath) {
+    verify(() => mockAuthRemoteDatasource.setUserData(
+          userModel: any(
+            that: predicate<UserModel>(
+              (userModel) =>
+                  userModel.id == tId &&
+                  userModel.name == tName &&
+                  userModel.email == tEmail &&
+                  userModel.pictureFilePathFromFirebase == tPicturePath,
+              'Expected UserModel with id, name, email and pictureFilePathFromFirebase',
+            ),
+            named: 'userModel',
+          ),
+        )).called(1);
   }
 
   group('forgotUserPassword', () {
@@ -318,7 +345,7 @@ void main() {
     const tUserModel = UserModel(id: tId, name: tName, email: tEmail);
 
     test(
-      'should return Right(AppUser) when internet is available, and correct userModel is retreived from firebase',
+      'should return Right(AppUser) when internet is available and correct userModel is retreived from firebase',
       () async {
         //arrange
         setUpMockConnectionToBool(true);
@@ -417,6 +444,124 @@ void main() {
             email: any(named: 'email'), password: any(named: 'password')));
         verifyNever(
             () => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')));
+      },
+    );
+  });
+  group('signUpWithEmailAndPassword', () {
+    const tEmail = 'test@gmail.com';
+    const tPassword = '12345678';
+    const tId = '123';
+    const tName = 'Test User';
+    const tPicturePath = '';
+    const tUserModel = UserModel(
+        id: tId,
+        name: tName,
+        email: tEmail,
+        pictureFilePathFromFirebase: tPicturePath);
+
+    test(
+      'should return Right(AppUser) when internet is available and firebase functions complete normally',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        setUpSignUpToUID(tId);
+        when(() => mockAuthRemoteDatasource.setUserData(
+            userModel: any(named: 'userModel'))).thenAnswer((_) async {});
+
+        //act
+        final result = await authRepositoryImpl.signUpWithEmailAndPassword(
+            name: tName, email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, const Right(tUserModel));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifySetUserDataToCheckProperties(tId, tName, tEmail, tPicturePath);
+      },
+    );
+
+    test(
+      'should return Left(Failure) when internet is not availble',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(false);
+        //act
+        final result = await authRepositoryImpl.signUpWithEmailAndPassword(
+            name: tName, email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, const Left(Failure(Constants.noConnectionErrorMessage)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verifyNever(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+            email: any(named: 'email'), password: any(named: 'password')));
+        verifyNever(() => mockAuthRemoteDatasource.setUserData(
+            userModel: any(named: 'userModel')));
+      },
+    );
+
+    test(
+      'should return Left(Failure) when SignUpWithEmailAndPasswordFailure exception is thrown by authRemoteDatasource.signUpWithEmailAndPassword',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        when(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenThrow(const SignUpWithEmailAndPasswordFailure());
+
+        //act
+        final result = await authRepositoryImpl.signUpWithEmailAndPassword(
+            name: tName, email: tEmail, password: tPassword);
+
+        //assert
+        expect(result,
+            Left(Failure(const SignUpWithEmailAndPasswordFailure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(() => mockAuthRemoteDatasource.setUserData(
+            userModel: any(named: 'userModel')));
+      },
+    );
+    test(
+      'should return Left(Failure) when FirebaseDataFailure exception is thrown by authRemoteDatasource.setUserData',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        setUpSignUpToUID(tId);
+        when(() => mockAuthRemoteDatasource.setUserData(
+                userModel: any(named: 'userModel')))
+            .thenThrow(const FirebaseDataFailure());
+
+        //act
+        final result = await authRepositoryImpl.signUpWithEmailAndPassword(
+            name: tName, email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, Left(Failure(const FirebaseDataFailure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifySetUserDataToCheckProperties(tId, tName, tEmail, tPicturePath);
+      },
+    );
+    test(
+      'should return Left(Failure) when any general exception is thrown',
+      () async {
+        //arrange
+        setUpMockConnectionToException();
+
+        //act
+        final result = await authRepositoryImpl.signUpWithEmailAndPassword(
+            name: tName, email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, Left(Failure(const Failure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verifyNever(() => mockAuthRemoteDatasource.signupWithEmailAndPassword(
+            email: any(named: 'email'), password: any(named: 'password')));
+        verifyNever(() => mockAuthRemoteDatasource.setUserData(
+            userModel: any(named: 'userModel')));
       },
     );
   });
