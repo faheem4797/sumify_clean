@@ -33,7 +33,7 @@ void main() {
         connectionChecker: mockConnectionChecker);
   });
 
-  void setUpMockConnection(bool trueOrFalse) {
+  void setUpMockConnectionToBool(bool trueOrFalse) {
     when(() => mockConnectionChecker.isConnected)
         .thenAnswer((_) async => trueOrFalse);
   }
@@ -43,7 +43,7 @@ void main() {
         .thenThrow(Exception('Unexpected error'));
   }
 
-  void setUpMockAuthUserToUser() {
+  void setUpMockAuthUser() {
     when(() => mockAuthRemoteDatasource.getCurrentUser)
         .thenReturn(mockAuthUser);
     when(() => mockAuthUser.uid).thenReturn('123');
@@ -51,15 +51,39 @@ void main() {
     when(() => mockAuthUser.email).thenReturn('test@example.com');
   }
 
+  void setUpGetCurrentUserToFirebaseAuthException(
+      String tFirebaseAuthExceptionErrorCode,
+      String? tFirebaseAuthExceptionErrorMessage) {
+    when(() => mockAuthRemoteDatasource.getCurrentUser).thenThrow(
+        FirebaseAuthException(
+            code: tFirebaseAuthExceptionErrorCode,
+            message: tFirebaseAuthExceptionErrorMessage));
+  }
+
+  void setUpLoginToUID(String tId) {
+    when(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+        email: any(named: 'email'),
+        password: any(named: 'password'))).thenAnswer((_) async => tId);
+  }
+
+  void setUpGetUserDataToUserModel(UserModel userModel) {
+    when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
+        .thenAnswer((_) async => userModel);
+  }
+
+  void setUpGetUserDataToFirebaseDataFailure() {
+    when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
+        .thenThrow(const FirebaseDataFailure());
+  }
+
   group('forgotUserPassword', () {
     const tEmail = 'test@gmail.com';
     const tSuccess = 'Success';
-    const tFailureMessage = 'Failed to send password reset email';
     test(
       'should return a string message when forgotPassword function completes correctly when internet is connected',
       () async {
         //arrange
-        setUpMockConnection(true);
+        setUpMockConnectionToBool(true);
         when(() => mockAuthRemoteDatasource.forgotUserPassword(
             email: any(named: 'email'))).thenAnswer((_) async => tSuccess);
 
@@ -80,7 +104,7 @@ void main() {
       'should return a failure when internet is not connected',
       () async {
         //arrange
-        setUpMockConnection(false);
+        setUpMockConnectionToBool(false);
 
         //act
         final result =
@@ -98,20 +122,18 @@ void main() {
       'should return a failure when SendPasswordResetEmailFailure is thrown by authRemoteDatasource',
       () async {
         //arrange
-        setUpMockConnection(true);
+        setUpMockConnectionToBool(true);
         when(() => mockAuthRemoteDatasource.forgotUserPassword(
                 email: any(named: 'email')))
-            .thenThrow(const SendPasswordResetEmailFailure(tFailureMessage));
+            .thenThrow(const SendPasswordResetEmailFailure());
 
         //act
         final result =
             await authRepositoryImpl.forgotUserPassword(email: tEmail);
 
         //assert
-        expect(result, isA<Left<Failure, String>>());
-        result.fold((l) => expect(l.message, tFailureMessage),
-            (_) => fail('Expected a Left containing a Failure'));
-
+        expect(result,
+            Left(Failure(const SendPasswordResetEmailFailure().message)));
         verify(() => mockConnectionChecker.isConnected).called(1);
         verify(() => mockAuthRemoteDatasource.forgotUserPassword(email: tEmail))
             .called(1);
@@ -149,7 +171,6 @@ void main() {
       email: 'test@example.com',
       pictureFilePathFromFirebase: null,
     );
-    const tFirebaseDataFailureErrorMessage = 'Firebase Data Failure';
     const tFirebaseAuthExceptionErrorCode = 'too-many-requests';
     const tFirebaseAuthExceptionErrorMessage = 'too-many-requests-message';
 
@@ -157,10 +178,9 @@ void main() {
       'should return AppUser when user is logged in, internet is connected and correct user data is retrieved from Database',
       () async {
         //arrange
-        setUpMockConnection(true);
-        setUpMockAuthUserToUser();
-        when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
-            .thenAnswer((_) async => tAppUserModel);
+        setUpMockConnectionToBool(true);
+        setUpMockAuthUser();
+        setUpGetUserDataToUserModel(tAppUserModel);
 
         //act
         final result = await authRepositoryImpl.currentUser();
@@ -197,8 +217,8 @@ void main() {
        and authRemoteDatasource.getCurrentUser does not returns null''',
       () async {
         //arrange
-        setUpMockAuthUserToUser();
-        setUpMockConnection(false);
+        setUpMockAuthUser();
+        setUpMockConnectionToBool(false);
 
         //act
         final result = await authRepositoryImpl.currentUser();
@@ -216,17 +236,15 @@ void main() {
       'should return Failure when authRemoteDatasource.getUserData throws a FirebaseDataFailure Exception',
       () async {
         //arrange
-        setUpMockAuthUserToUser();
-        setUpMockConnection(true);
-        when(() => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')))
-            .thenThrow(
-                const FirebaseDataFailure(tFirebaseDataFailureErrorMessage));
+        setUpMockAuthUser();
+        setUpMockConnectionToBool(true);
+        setUpGetUserDataToFirebaseDataFailure();
 
         //act
         final result = await authRepositoryImpl.currentUser();
 
         //assert
-        expect(result, const Left(Failure(tFirebaseDataFailureErrorMessage)));
+        expect(result, Left(Failure(const FirebaseDataFailure().message)));
         verify(() => mockAuthRemoteDatasource.getCurrentUser).called(1);
         verify(() => mockConnectionChecker.isConnected).called(1);
         verify(() => mockAuthRemoteDatasource.getUserData(id: tAppUserModel.id))
@@ -238,11 +256,9 @@ void main() {
       'should return Failure when authRemoteDatasource.getCurrentUser throws a FirebaseAuthException with a message',
       () async {
         //arrange
-
-        when(() => mockAuthRemoteDatasource.getCurrentUser).thenThrow(
-            FirebaseAuthException(
-                code: tFirebaseAuthExceptionErrorCode,
-                message: tFirebaseAuthExceptionErrorMessage));
+        setUpGetCurrentUserToFirebaseAuthException(
+            tFirebaseAuthExceptionErrorCode,
+            tFirebaseAuthExceptionErrorMessage);
 
         //act
         final result = await authRepositoryImpl.currentUser();
@@ -259,11 +275,8 @@ void main() {
       'should return Failure when authRemoteDatasource.getCurrentUser throws a FirebaseAuthException with no message',
       () async {
         //arrange
-
-        when(() => mockAuthRemoteDatasource.getCurrentUser)
-            .thenThrow(FirebaseAuthException(
-          code: tFirebaseAuthExceptionErrorCode,
-        ));
+        setUpGetCurrentUserToFirebaseAuthException(
+            tFirebaseAuthExceptionErrorCode, null);
 
         //act
         final result = await authRepositoryImpl.currentUser();
@@ -281,7 +294,7 @@ void main() {
       'should return Failure when exception happens',
       () async {
         //arrange
-        setUpMockAuthUserToUser();
+        setUpMockAuthUser();
         setUpMockConnectionToException();
 
         //act
@@ -291,6 +304,117 @@ void main() {
         expect(result, const Left(Failure()));
         verify(() => mockAuthRemoteDatasource.getCurrentUser).called(1);
         verify(() => mockConnectionChecker.isConnected).called(1);
+        verifyNever(
+            () => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')));
+      },
+    );
+  });
+
+  group('loginWithEmailAndPassword', () {
+    const tEmail = 'test@gmail.com';
+    const tPassword = '12345678';
+    const tId = '123';
+    const tName = 'Test User';
+    const tUserModel = UserModel(id: tId, name: tName, email: tEmail);
+
+    test(
+      'should return Right(AppUser) when internet is available, and correct userModel is retreived from firebase',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        setUpLoginToUID(tId);
+        setUpGetUserDataToUserModel(tUserModel);
+
+        //act
+        final result = await authRepositoryImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, const Right(tUserModel));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verify(() => mockAuthRemoteDatasource.getUserData(id: tId)).called(1);
+      },
+    );
+
+    test(
+      'should return Left(Failure) when internet is not availble',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(false);
+        //act
+        final result = await authRepositoryImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, const Left(Failure(Constants.noConnectionErrorMessage)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verifyNever(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+            email: any(named: 'email'), password: any(named: 'password')));
+        verifyNever(
+            () => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')));
+      },
+    );
+
+    test(
+      'should return Left(Failure) when SignInWithEmailAndPasswordFailure exception is thrown by authRemoteDatasource.loginWithEmailAndPassword',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        when(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenThrow(const SignInWithEmailAndPasswordFailure());
+
+        //act
+        final result = await authRepositoryImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result,
+            Left(Failure(const SignInWithEmailAndPasswordFailure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(
+            () => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')));
+      },
+    );
+    test(
+      'should return Left(Failure) when FirebaseDataFailure exception is thrown by authRemoteDatasource.getUserData',
+      () async {
+        //arrange
+        setUpMockConnectionToBool(true);
+        setUpLoginToUID(tId);
+        setUpGetUserDataToFirebaseDataFailure();
+
+        //act
+        final result = await authRepositoryImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, Left(Failure(const FirebaseDataFailure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verify(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verify(() => mockAuthRemoteDatasource.getUserData(id: tId)).called(1);
+      },
+    );
+    test(
+      'should return Left(Failure) when any general exception is thrown',
+      () async {
+        //arrange
+        setUpMockConnectionToException();
+
+        //act
+        final result = await authRepositoryImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, Left(Failure(const Failure().message)));
+        verify(() => mockConnectionChecker.isConnected).called(1);
+        verifyNever(() => mockAuthRemoteDatasource.loginWithEmailAndPassword(
+            email: any(named: 'email'), password: any(named: 'password')));
         verifyNever(
             () => mockAuthRemoteDatasource.getUserData(id: any(named: 'id')));
       },

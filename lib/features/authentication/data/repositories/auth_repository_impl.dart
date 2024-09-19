@@ -72,14 +72,11 @@ class AuthRepositoryImpl implements AuthRepository {
           .loginWithEmailAndPassword(email: email, password: password);
       final UserModel userModel =
           await authRemoteDatasource.getUserData(id: userId);
-      //TODO: FirebaseDataFailure can be thrown from here
 
-      // if (userModel == null) {
-      //   return left(const Failure('User is null'));
-      // } else {
       return right(userModel);
-      // }
     } on SignInWithEmailAndPasswordFailure catch (e) {
+      return left(Failure(e.message));
+    } on FirebaseDataFailure catch (e) {
       return left(Failure(e.message));
     } catch (_) {
       return left(const Failure());
