@@ -1,4 +1,6 @@
-class FirebaseDataFailure implements Exception {
+import 'package:equatable/equatable.dart';
+
+class FirebaseDataFailure extends Equatable implements Exception {
   const FirebaseDataFailure([
     this.message = 'An unknown exception occurred.',
   ]);
@@ -28,4 +30,7 @@ class FirebaseDataFailure implements Exception {
 
   /// The associated error message.
   final String message;
+
+  @override
+  List<Object?> get props => [message];
 }

@@ -69,6 +69,7 @@ dev_dependencies:
   firebase_storage_mocks: ^0.7.0
   flutter_test:
     sdk: flutter
+  mock_exceptions: ^0.8.2
 
 flutter_launcher_icons:
 

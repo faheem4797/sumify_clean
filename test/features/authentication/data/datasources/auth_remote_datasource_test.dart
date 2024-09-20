@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
+import 'package:mock_exceptions/mock_exceptions.dart';
 
 void main() {
   late AuthRemoteDatasourceImpl authRemoteDatasource;
@@ -19,9 +21,14 @@ void main() {
   });
 
   group('getUserData', () {
+    const tUsersCollectionPath = 'users';
     const tId = '123';
     const tName = 'Test User';
     const tEmail = 'test@gmail.com';
+
+    const tUserNotFoundError = 'User not found';
+    const tNotFoundErrorCode = 'not-found';
+    const tNotFoundErrorMessage = 'Document not found.';
 
     const tUserModel = UserModel(
       id: tId,
@@ -30,16 +37,21 @@ void main() {
       pictureFilePathFromFirebase: '',
     );
 
+    const tUserModelMap = {
+      'id': tId,
+      'name': tName,
+      'email': tEmail,
+      'pictureFilePathFromFirebase': '',
+    };
+
     test(
       'should return UserModel when user document exists in Firestore',
       () async {
         // Arrange
-        await fakeFirestore.collection('users').doc(tId).set({
-          'id': tId,
-          'name': tName,
-          'email': tEmail,
-          'pictureFilePathFromFirebase': '',
-        });
+        await fakeFirestore
+            .collection(tUsersCollectionPath)
+            .doc(tId)
+            .set(tUserModelMap);
 
         // Act
         final result = await authRemoteDatasource.getUserData(id: tId);
@@ -50,34 +62,63 @@ void main() {
     );
 
     test(
-      'should throw FirebaseDataFailure when user document does not exist in Firestore',
-      () async {
-        // Arrange: Make sure no user data exists in Firestore
+        'should throw FirebaseDataFailure with User Not Found when no such document exists ',
+        () async {
+      //Act
+      final resultCall = authRemoteDatasource.getUserData;
+      //Assert
+      expect(() async => await resultCall(id: tId),
+          throwsA(const FirebaseDataFailure(tUserNotFoundError)));
+    });
+    test(
+        'should throw FirebaseDataFailure with User Not Found when an empty document exists ',
+        () async {
+      // Arrange:
+      await fakeFirestore.collection(tUsersCollectionPath).doc(tId).set({});
 
-        // Act & Assert
-        expect(() async => await authRemoteDatasource.getUserData(id: tId),
-            throwsA(isA<FirebaseDataFailure>()));
+      // Act
+      final resultCall = authRemoteDatasource.getUserData;
+      //Assert
+      expect(() async => await resultCall(id: tId),
+          throwsA(const FirebaseDataFailure(tUserNotFoundError)));
+    });
+
+    test(
+      'should throw FirebaseDataFailure with proper message when FirebaseException occurs',
+      () async {
+        // Arrange:
+        final tDocReference =
+            fakeFirestore.collection(tUsersCollectionPath).doc(tId);
+
+        whenCalling(Invocation.method(#get, null)).on(tDocReference).thenThrow(
+            FirebaseException(plugin: 'firestore', code: tNotFoundErrorCode));
+
+        //Act
+        final resultCall = authRemoteDatasource.getUserData;
+
+        //Assert
+        expect(() async => await resultCall(id: tId),
+            throwsA(const FirebaseDataFailure(tNotFoundErrorMessage)));
       },
     );
+    test(
+      'should throw FirebaseDataFailure when a general exception occurs',
+      () async {
+        // Arrange:
+        final tDocReference =
+            fakeFirestore.collection(tUsersCollectionPath).doc(tId);
 
-    // test(
-    //   'should throw FirebaseDataFailure when there is a FirebaseException',
-    //   () async {
-    //     // Arrange: Simulate Firestore throwing an exception
+        whenCalling(Invocation.method(#get, null))
+            .on(tDocReference)
+            .thenThrow(Exception());
 
-    //     // fakeFirestore = FakeFirebaseFirestore(
-    //     //   onError: (_) => throw FirebaseException(
-    //     //     plugin: 'firestore',
-    //     //     code: 'permission-denied',
-    //     //   ),
-    //     // );
-    //     authRemoteDatasource = AuthRemoteDatasourceImpl(
-    //         firebaseAuth: mockFirebaseAuth, firebaseFirestore: fakeFirestore);
+        //Act
+        final resultCall = authRemoteDatasource.getUserData;
 
-    //     // Act & Assert
-    //     expect(() async => await authRemoteDatasource.getUserData(id: tId),
-    //         throwsA(isA<FirebaseDataFailure>()));
-    //   },
-    // );
+        //Assert
+        expect(() async => await resultCall(id: tId),
+            throwsA(const FirebaseDataFailure()));
+      },
+    );
   });
 }

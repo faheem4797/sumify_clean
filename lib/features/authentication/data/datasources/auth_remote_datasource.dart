@@ -31,13 +31,16 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       final userDoc = await firebaseFirestore.collection('users').doc(id).get();
 
-      if (userDoc.data() != null) {
-        return UserModel.fromMap(userDoc.data()!);
+      if ((userDoc.data() == null) ||
+          (userDoc.data()!.isEmpty || (!userDoc.exists))) {
+        throw const FirebaseDataFailure('User not found');
       } else {
-        throw const FirebaseDataFailure();
+        return UserModel.fromMap(userDoc.data()!);
       }
     } on FirebaseException catch (e) {
       throw FirebaseDataFailure.fromCode(e.code);
+    } on FirebaseDataFailure {
+      rethrow;
     } catch (_) {
       throw const FirebaseDataFailure();
     }
@@ -71,6 +74,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       return userCredentials.user!.uid;
     } on FirebaseAuthException catch (e) {
       throw SignInWithEmailAndPasswordFailure.fromCode(e.code);
+    } on SignInWithEmailAndPasswordFailure {
+      rethrow;
     } catch (_) {
       throw const SignInWithEmailAndPasswordFailure();
     }
@@ -88,6 +93,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       return userCredentials.user!.uid;
     } on FirebaseAuthException catch (e) {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
+    } on SignUpWithEmailAndPasswordFailure {
+      rethrow;
     } catch (_) {
       throw const SignUpWithEmailAndPasswordFailure();
     }

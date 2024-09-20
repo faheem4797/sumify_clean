@@ -37,9 +37,7 @@ Future<void> initDependencies() async {
 Future<void> _initAuth() async {
   serviceLocator
     ..registerFactory<AuthRemoteDatasource>(() => AuthRemoteDatasourceImpl(
-        firebaseAuth: serviceLocator(),
-        //TODO:
-        firebaseFirestore: serviceLocator()))
+        firebaseAuth: serviceLocator(), firebaseFirestore: serviceLocator()))
     ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
         connectionChecker: serviceLocator(),
         authRemoteDatasource: serviceLocator()))
