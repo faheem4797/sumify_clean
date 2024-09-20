@@ -20,30 +20,32 @@ void main() {
         firebaseAuth: mockFirebaseAuth, firebaseFirestore: fakeFirestore);
   });
 
+  const tUsersCollectionPath = 'users';
+  const tId = '123';
+  const tName = 'Test User';
+  const tEmail = 'test@gmail.com';
+
+  const tUserNotFoundError = 'User not found';
+  const tNotFoundErrorCode = 'not-found';
+  const tNotFoundErrorMessage = 'Document not found.';
+  const tPermissionDeniedErrorCode = 'permission-denied';
+  const tPermissionDeniedErrorMessage = 'Permission denied.';
+
+  const tUserModel = UserModel(
+    id: tId,
+    name: tName,
+    email: tEmail,
+    pictureFilePathFromFirebase: '',
+  );
+
+  const tUserModelMap = {
+    'id': tId,
+    'name': tName,
+    'email': tEmail,
+    'pictureFilePathFromFirebase': '',
+  };
+
   group('getUserData', () {
-    const tUsersCollectionPath = 'users';
-    const tId = '123';
-    const tName = 'Test User';
-    const tEmail = 'test@gmail.com';
-
-    const tUserNotFoundError = 'User not found';
-    const tNotFoundErrorCode = 'not-found';
-    const tNotFoundErrorMessage = 'Document not found.';
-
-    const tUserModel = UserModel(
-      id: tId,
-      name: tName,
-      email: tEmail,
-      pictureFilePathFromFirebase: '',
-    );
-
-    const tUserModelMap = {
-      'id': tId,
-      'name': tName,
-      'email': tEmail,
-      'pictureFilePathFromFirebase': '',
-    };
-
     test(
       'should return UserModel when user document exists in Firestore',
       () async {
@@ -84,7 +86,7 @@ void main() {
     });
 
     test(
-      'should throw FirebaseDataFailure with proper message when FirebaseException occurs',
+      'should throw FirebaseDataFailure with proper message when FirebaseException occurs while getting data',
       () async {
         // Arrange:
         final tDocReference =
@@ -102,7 +104,7 @@ void main() {
       },
     );
     test(
-      'should throw FirebaseDataFailure when a general exception occurs',
+      'should throw FirebaseDataFailure when a general exception occurs while getting data',
       () async {
         // Arrange:
         final tDocReference =
@@ -117,6 +119,66 @@ void main() {
 
         //Assert
         expect(() async => await resultCall(id: tId),
+            throwsA(const FirebaseDataFailure()));
+      },
+    );
+  });
+
+  group('setUserData', () {
+    test(
+      'should set UserModel into firestore',
+      () async {
+        //arrange
+        await authRemoteDatasource.setUserData(userModel: tUserModel);
+
+        //act
+
+        final result = await fakeFirestore
+            .collection(tUsersCollectionPath)
+            .doc(tUserModel.id)
+            .get();
+
+        //assert
+        expect(result.data(), tUserModelMap);
+      },
+    );
+
+    test(
+      'should throw FirebaseDataFailure with proper message when FirebaseException occurs while setting data',
+      () async {
+        // Arrange:
+        final tDocReference =
+            fakeFirestore.collection(tUsersCollectionPath).doc(tId);
+
+        whenCalling(Invocation.method(#set, null)).on(tDocReference).thenThrow(
+            FirebaseException(
+                plugin: 'firestore', code: tPermissionDeniedErrorCode));
+
+        //Act
+        final resultCall = authRemoteDatasource.setUserData;
+
+        //Assert
+        expect(() async => await resultCall(userModel: tUserModel),
+            throwsA(const FirebaseDataFailure(tPermissionDeniedErrorMessage)));
+      },
+    );
+
+    test(
+      'should throw FirebaseDataFailure when a general exception occurs while setting data',
+      () async {
+        // Arrange:
+        final tDocReference =
+            fakeFirestore.collection(tUsersCollectionPath).doc(tId);
+
+        whenCalling(Invocation.method(#set, null))
+            .on(tDocReference)
+            .thenThrow(Exception());
+
+        //Act
+        final resultCall = authRemoteDatasource.setUserData;
+
+        //Assert
+        expect(() async => await resultCall(userModel: tUserModel),
             throwsA(const FirebaseDataFailure()));
       },
     );

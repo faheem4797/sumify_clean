@@ -53,8 +53,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
           .collection('users')
           .doc(userModel.id)
           .set(userModel.toMap());
-
-      // return await usersCollection.doc(userModel.id).set(userModel.toMap());
     } on FirebaseException catch (e) {
       throw FirebaseDataFailure.fromCode(e.code);
     } catch (_) {
