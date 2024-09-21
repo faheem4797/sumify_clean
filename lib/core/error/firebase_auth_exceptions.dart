@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 class SignUpWithEmailAndPasswordFailure implements Exception {
   /// {@macro sign_up_with_email_and_password_failure}
   const SignUpWithEmailAndPasswordFailure([
@@ -44,7 +42,7 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
 /// Thrown during the login process if a failure occurs.
 /// https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/signInWithEmailAndPassword.html
 /// {@endtemplate}
-class SignInWithEmailAndPasswordFailure extends Equatable implements Exception {
+class SignInWithEmailAndPasswordFailure implements Exception {
   /// {@macro log_in_with_email_and_password_failure}
   const SignInWithEmailAndPasswordFailure([
     this.message = 'An unknown exception occurred.',
@@ -77,9 +75,6 @@ class SignInWithEmailAndPasswordFailure extends Equatable implements Exception {
 
   /// The associated error message.
   final String message;
-
-  @override
-  List<Object?> get props => [message];
 }
 
 /// Thrown during the logout process if a failure occurs.

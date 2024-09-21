@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
@@ -33,7 +34,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
       if ((userDoc.data() == null) ||
           (userDoc.data()!.isEmpty || (!userDoc.exists))) {
-        throw const FirebaseDataFailure('User not found');
+        throw const FirebaseDataFailure(Constants.userDataNotFoundErrorMessage);
       } else {
         return UserModel.fromMap(userDoc.data()!);
       }
@@ -67,7 +68,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final UserCredential userCredentials = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
       if (userCredentials.user == null) {
-        throw const SignInWithEmailAndPasswordFailure('User is null!');
+        throw const SignInWithEmailAndPasswordFailure(
+            Constants.userIsNullErrorMessage);
       }
       return userCredentials.user!.uid;
     } on FirebaseAuthException catch (e) {
@@ -86,7 +88,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       if (userCredentials.user == null) {
-        throw const SignUpWithEmailAndPasswordFailure('User is null!');
+        throw const SignUpWithEmailAndPasswordFailure(
+            Constants.userIsNullErrorMessage);
       }
       return userCredentials.user!.uid;
     } on FirebaseAuthException catch (e) {
@@ -103,7 +106,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
 
-      return 'Password reset email sent successfully';
+      return Constants.passwordResetSuccessMessage;
     } on FirebaseAuthException catch (e) {
       throw SendPasswordResetEmailFailure.fromCode(e.code);
     } catch (e) {

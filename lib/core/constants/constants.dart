@@ -60,4 +60,10 @@ class Constants {
 
 //FAILURE TEXTS
   static const nullUserErrorMessage = 'User not logged in';
+  static const userDataNotFoundErrorMessage = 'User data not found';
+  static const userIsNullErrorMessage = 'User is null!';
+
+  //SUCCESS TEXTS
+  static const passwordResetSuccessMessage =
+      'Password reset email sent successfully';
 }

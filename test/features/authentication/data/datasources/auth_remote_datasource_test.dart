@@ -1,8 +1,8 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
@@ -19,7 +19,6 @@ void main() {
   late AuthRemoteDatasourceImpl authRemoteDatasourceImpl;
   late MockFirebaseAuth mockFirebaseAuth;
   late FakeFirebaseFirestore fakeFirestore;
-
   late MockUserCredential mockUserCredential;
   late MockUser mockUser;
 
@@ -28,7 +27,6 @@ void main() {
     fakeFirestore = FakeFirebaseFirestore();
     mockUserCredential = MockUserCredential();
     mockUser = MockUser();
-
     authRemoteDatasourceImpl = AuthRemoteDatasourceImpl(
         firebaseAuth: mockFirebaseAuth, firebaseFirestore: fakeFirestore);
   });
@@ -39,7 +37,6 @@ void main() {
   const tEmail = 'test@gmail.com';
   const tPassword = '12345678';
 
-  const tUserNotFoundError = 'User not found';
   const tPermissionDeniedErrorCode = 'permission-denied';
   const tPermissionDeniedErrorMessage = 'Permission denied.';
   const tInvalidEmailErrorCode = 'invalid-email';
@@ -142,8 +139,10 @@ void main() {
       //Act
       final resultCall = authRemoteDatasourceImpl.getUserData;
       //Assert
-      expect(() async => await resultCall(id: tId),
-          throwsA(const FirebaseDataFailure(tUserNotFoundError)));
+      expect(
+          () async => await resultCall(id: tId),
+          throwsA(const FirebaseDataFailure(
+              Constants.userDataNotFoundErrorMessage)));
     });
     test(
         'should throw FirebaseDataFailure with User Not Found when an empty document exists ',
@@ -154,8 +153,10 @@ void main() {
       // Act
       final resultCall = authRemoteDatasourceImpl.getUserData;
       //Assert
-      expect(() async => await resultCall(id: tId),
-          throwsA(const FirebaseDataFailure(tUserNotFoundError)));
+      expect(
+          () async => await resultCall(id: tId),
+          throwsA(const FirebaseDataFailure(
+              Constants.userDataNotFoundErrorMessage)));
     });
 
     test(
@@ -268,8 +269,10 @@ void main() {
         //act
         final result = authRemoteDatasourceImpl.loginWithEmailAndPassword;
         //assert
-        expect(() async => await result(email: tEmail, password: tPassword),
-            throwsA(const SignInWithEmailAndPasswordFailure('User is null!')));
+        expect(
+            () async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignInWithEmailAndPasswordFailure(
+                Constants.userIsNullErrorMessage)));
         verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
             email: tEmail, password: tPassword)).called(1);
       },
@@ -343,8 +346,10 @@ void main() {
         //act
         final result = authRemoteDatasourceImpl.signupWithEmailAndPassword;
         //assert
-        expect(() async => await result(email: tEmail, password: tPassword),
-            throwsA(const SignUpWithEmailAndPasswordFailure('User is null!')));
+        expect(
+            () async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignUpWithEmailAndPasswordFailure(
+                Constants.userIsNullErrorMessage)));
         verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
             email: tEmail, password: tPassword)).called(1);
       },
@@ -384,6 +389,87 @@ void main() {
         verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
             email: tEmail, password: tPassword)).called(1);
         verifyNever(() => mockUserCredential.user);
+      },
+    );
+  });
+
+  group('forgotUserPassword', () {
+    test(
+      'should return Success String when sendPasswordResetEmail is sent successfully',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.sendPasswordResetEmail(
+            email: any(named: 'email'))).thenAnswer((_) => Future.value());
+
+        //act
+        final result =
+            await authRemoteDatasourceImpl.forgotUserPassword(email: tEmail);
+
+        //assert
+        expect(result, Constants.passwordResetSuccessMessage);
+        verify(() => mockFirebaseAuth.sendPasswordResetEmail(email: tEmail))
+            .called(1);
+      },
+    );
+    test(
+      'should return SendPasswordResetEmailFailure with a proper message when FirebaseAuthException occurs while sending reset email',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.sendPasswordResetEmail(
+                email: any(named: 'email')))
+            .thenThrow(FirebaseAuthException(code: tInvalidEmailErrorCode));
+
+        //act
+        final result = authRemoteDatasourceImpl.forgotUserPassword;
+        //assert
+        expect(
+            () async => await result(email: tEmail),
+            throwsA(const SendPasswordResetEmailFailure(
+                tInvalidEmailErrorMessage)));
+      },
+    );
+    test(
+      'should return SendPasswordResetEmailFailure when a generic exception occurs',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.sendPasswordResetEmail(
+            email: any(named: 'email'))).thenThrow(Exception());
+
+        //act
+        final result = authRemoteDatasourceImpl.forgotUserPassword;
+        //assert
+        expect(() async => await result(email: tEmail),
+            throwsA(const SendPasswordResetEmailFailure()));
+      },
+    );
+  });
+
+  group('getCurrentUser', () {
+    test(
+      'should return current user when user is signed in',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.currentUser).thenReturn(mockUser);
+
+        // Act
+        final result = authRemoteDatasourceImpl.getCurrentUser;
+
+        // Assert
+        expect(result, isNotNull);
+        expect(result, isA<User>());
+      },
+    );
+    test(
+      'should return null when user is not signed in',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.currentUser).thenReturn(null);
+
+        // Act
+        final result = authRemoteDatasourceImpl.getCurrentUser;
+
+        // Assert
+        expect(result, isNull);
       },
     );
   });
