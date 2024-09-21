@@ -12,13 +12,7 @@ void main() {
     test(
       'should return a pure value when pure constructor is callled',
       () async {
-        //arrange
-
-        //act
-        // const result = ConfirmPassword.pure();
-
         //assert
-
         expect(tConfirmPasswordPure.value, equals(''));
         expect(tConfirmPasswordPure.password, equals(''));
         expect(tConfirmPasswordPure.isPure, equals(true));
@@ -28,11 +22,7 @@ void main() {
     test(
       'should return a dirty value when dirty constructor is callled  with a provided password and no value',
       () async {
-        //arrange
-
-        //act
         //assert
-
         expect(tConfirmPassword.value, equals(''));
         expect(tConfirmPassword.password, equals('test'));
         expect(tConfirmPassword.isPure, equals(false));
@@ -42,12 +32,7 @@ void main() {
     test(
       'should return a dirty value when dirty constructor is callled  with a provided password and a provided value',
       () async {
-        //arrange
-
-        //act
-
         //assert
-
         expect(tConfirmPasswordValue.value, equals('test'));
         expect(tConfirmPasswordValue.password, equals('test'));
         expect(tConfirmPasswordValue.isPure, equals(false));
@@ -57,14 +42,10 @@ void main() {
     test(
       'should return ConfirmPasswordValidationError.empty when value is empty',
       () async {
-        //arrange
-
         //act
-
         final result = tConfirmPassword.validator(tConfirmPassword.value);
 
         //assert
-
         expect(result, equals(ConfirmPasswordValidationError.empty));
       },
     );
@@ -72,16 +53,13 @@ void main() {
       'should return ConfirmPasswordValidationError.invalid when value does not match the password',
       () async {
         //arrange
-
         const tPasswordValue =
             ConfirmPassword.dirty(password: '12345678', value: 'test12345678');
 
         //act
-
         final result = tPasswordValue.validator(tPasswordValue.value);
 
         //assert
-
         expect(result, equals(ConfirmPasswordValidationError.invalid));
       },
     );
@@ -90,16 +68,13 @@ void main() {
       'should return null when value matches the password',
       () async {
         //arrange
-
         const tPasswordValue =
             ConfirmPassword.dirty(password: '12345678', value: '12345678');
 
         //act
-
         final result = tPasswordValue.validator(tPasswordValue.value);
 
         //assert
-
         expect(result, isNull);
       },
     );

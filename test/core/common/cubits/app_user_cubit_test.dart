@@ -34,10 +34,6 @@ void main() {
             .having((state) => state.user.id, 'user id', '1')
             .having((state) => state.user.name, 'name', 'test')
             .having((state) => state.user.email, 'email', 'test@example.com'),
-        // isA<AppUserLoggedIn>()
-        //     .having((state) => state.user.name, 'name', 'test'),
-        // isA<AppUserLoggedIn>()
-        //     .having((state) => state.user.email, 'email', 'test@example.com'),
       ],
     );
   });

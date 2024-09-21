@@ -3,20 +3,16 @@ import 'package:sumify_clean/core/common/form_inputs/email.dart';
 
 void main() {
   group('Email', () {
+    const tEmailPure = Email.pure();
     const tEmail = Email.dirty();
     const tEmailValue = Email.dirty('test');
 
     test(
       'should return pure value when pure constructor is called',
       () async {
-        //arrange
-
-        //act
-        const result = Email.pure('');
-
         //assert
-        expect(result.value, equals(''));
-        expect(result.isPure, equals(true));
+        expect(tEmailPure.value, equals(''));
+        expect(tEmailPure.isPure, equals(true));
       },
     );
 
@@ -50,8 +46,6 @@ void main() {
     test(
       'should return EmailValidationError.invalid when provided value does not match the Regexp',
       () async {
-        //arrange
-
         //act
         final result = tEmailValue.validator(tEmailValue.value);
 
