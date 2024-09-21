@@ -64,8 +64,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<String> loginWithEmailAndPassword(
       {required String email, required String password}) async {
     try {
-      final userCredentials = await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      final UserCredential userCredentials = await firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
       if (userCredentials.user == null) {
         throw const SignInWithEmailAndPasswordFailure('User is null!');
       }

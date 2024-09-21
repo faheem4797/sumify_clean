@@ -1,22 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/datasources/auth_remote_datasource.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
 import 'package:mock_exceptions/mock_exceptions.dart';
 
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockUserCredential extends Mock implements UserCredential {}
+
+class MockUser extends Mock implements User {}
+
 void main() {
-  late AuthRemoteDatasourceImpl authRemoteDatasource;
+  late AuthRemoteDatasourceImpl authRemoteDatasourceImpl;
   late MockFirebaseAuth mockFirebaseAuth;
   late FakeFirebaseFirestore fakeFirestore;
+
+  late MockUserCredential mockUserCredential;
+  late MockUser mockUser;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     fakeFirestore = FakeFirebaseFirestore();
+    mockUserCredential = MockUserCredential();
+    mockUser = MockUser();
 
-    authRemoteDatasource = AuthRemoteDatasourceImpl(
+    authRemoteDatasourceImpl = AuthRemoteDatasourceImpl(
         firebaseAuth: mockFirebaseAuth, firebaseFirestore: fakeFirestore);
   });
 
@@ -24,6 +38,7 @@ void main() {
   const tId = '123';
   const tName = 'Test User';
   const tEmail = 'test@gmail.com';
+  const tPassword = '12345678';
 
   const tUserNotFoundError = 'User not found';
   const tNotFoundErrorCode = 'not-found';
@@ -56,7 +71,7 @@ void main() {
             .set(tUserModelMap);
 
         // Act
-        final result = await authRemoteDatasource.getUserData(id: tId);
+        final result = await authRemoteDatasourceImpl.getUserData(id: tId);
 
         // Assert
         expect(result, tUserModel);
@@ -67,7 +82,7 @@ void main() {
         'should throw FirebaseDataFailure with User Not Found when no such document exists ',
         () async {
       //Act
-      final resultCall = authRemoteDatasource.getUserData;
+      final resultCall = authRemoteDatasourceImpl.getUserData;
       //Assert
       expect(() async => await resultCall(id: tId),
           throwsA(const FirebaseDataFailure(tUserNotFoundError)));
@@ -79,7 +94,7 @@ void main() {
       await fakeFirestore.collection(tUsersCollectionPath).doc(tId).set({});
 
       // Act
-      final resultCall = authRemoteDatasource.getUserData;
+      final resultCall = authRemoteDatasourceImpl.getUserData;
       //Assert
       expect(() async => await resultCall(id: tId),
           throwsA(const FirebaseDataFailure(tUserNotFoundError)));
@@ -96,7 +111,7 @@ void main() {
             FirebaseException(plugin: 'firestore', code: tNotFoundErrorCode));
 
         //Act
-        final resultCall = authRemoteDatasource.getUserData;
+        final resultCall = authRemoteDatasourceImpl.getUserData;
 
         //Assert
         expect(() async => await resultCall(id: tId),
@@ -115,7 +130,7 @@ void main() {
             .thenThrow(Exception());
 
         //Act
-        final resultCall = authRemoteDatasource.getUserData;
+        final resultCall = authRemoteDatasourceImpl.getUserData;
 
         //Assert
         expect(() async => await resultCall(id: tId),
@@ -129,7 +144,7 @@ void main() {
       'should set UserModel into firestore',
       () async {
         //arrange
-        await authRemoteDatasource.setUserData(userModel: tUserModel);
+        await authRemoteDatasourceImpl.setUserData(userModel: tUserModel);
 
         //act
 
@@ -155,7 +170,7 @@ void main() {
                 plugin: 'firestore', code: tPermissionDeniedErrorCode));
 
         //Act
-        final resultCall = authRemoteDatasource.setUserData;
+        final resultCall = authRemoteDatasourceImpl.setUserData;
 
         //Assert
         expect(() async => await resultCall(userModel: tUserModel),
@@ -175,11 +190,92 @@ void main() {
             .thenThrow(Exception());
 
         //Act
-        final resultCall = authRemoteDatasource.setUserData;
+        final resultCall = authRemoteDatasourceImpl.setUserData;
 
         //Assert
         expect(() async => await resultCall(userModel: tUserModel),
             throwsA(const FirebaseDataFailure()));
+      },
+    );
+  });
+
+  group('loginWithEmailAndPassword', () {
+    test(
+      'should return uid of user when signInWithEmailAndPassword is a success',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.signInWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => mockUserCredential);
+
+        when(() => mockUserCredential.user).thenReturn(mockUser);
+        when(() => mockUser.uid).thenReturn(tId);
+
+        //act
+        final result = await authRemoteDatasourceImpl.loginWithEmailAndPassword(
+            email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, tId);
+        verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+      },
+    );
+
+    test(
+      'should throw SignInWithEmailAndPasswordFailure when user is null',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.signInWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => mockUserCredential);
+        when(() => mockUserCredential.user).thenReturn(null);
+        //act
+        final result = authRemoteDatasourceImpl.loginWithEmailAndPassword;
+        //assert
+        expect(() async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignInWithEmailAndPasswordFailure('User is null!')));
+        verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+      },
+    );
+    test(
+      'should throw SignInWithEmailAndPasswordFailure with a proper message when FirebaseAuthException occurs',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.signInWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenThrow(FirebaseAuthException(code: 'wrong-password'));
+
+        //act
+        final result = authRemoteDatasourceImpl.loginWithEmailAndPassword;
+        //assert
+        expect(
+            () async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignInWithEmailAndPasswordFailure(
+                'Incorrect password, please try again.')));
+        verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(() => mockUserCredential.user);
+      },
+    );
+
+    test(
+      'should throw SignInWithEmailAndPasswordFailure when a general exception occurs',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'))).thenThrow(Exception());
+
+        //act
+        final result = authRemoteDatasourceImpl.loginWithEmailAndPassword;
+        //assert
+        expect(() async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignInWithEmailAndPasswordFailure()));
+        verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(() => mockUserCredential.user);
       },
     );
   });
