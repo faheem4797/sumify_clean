@@ -245,7 +245,7 @@ void main() {
         //arrange
         when(() => mockFirebaseAuth.signInWithEmailAndPassword(
                 email: any(named: 'email'), password: any(named: 'password')))
-            .thenThrow(FirebaseAuthException(code: 'wrong-password'));
+            .thenThrow(FirebaseAuthException(code: 'invalid-email'));
 
         //act
         final result = authRemoteDatasourceImpl.loginWithEmailAndPassword;
@@ -253,7 +253,7 @@ void main() {
         expect(
             () async => await result(email: tEmail, password: tPassword),
             throwsA(const SignInWithEmailAndPasswordFailure(
-                'Incorrect password, please try again.')));
+                'Email is not valid or badly formatted.')));
         verify(() => mockFirebaseAuth.signInWithEmailAndPassword(
             email: tEmail, password: tPassword)).called(1);
         verifyNever(() => mockUserCredential.user);
@@ -279,4 +279,86 @@ void main() {
       },
     );
   });
+
+  group('signupWithEmailAndPassword', () {
+    test(
+      'should return uid of user when signupWithEmailAndPassword is a success',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => mockUserCredential);
+
+        when(() => mockUserCredential.user).thenReturn(mockUser);
+        when(() => mockUser.uid).thenReturn(tId);
+
+        //act
+        final result = await authRemoteDatasourceImpl
+            .signupWithEmailAndPassword(email: tEmail, password: tPassword);
+
+        //assert
+        expect(result, tId);
+        verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+      },
+    );
+
+    test(
+      'should throw SignUpWithEmailAndPasswordFailure when user is null',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => mockUserCredential);
+        when(() => mockUserCredential.user).thenReturn(null);
+        //act
+        final result = authRemoteDatasourceImpl.signupWithEmailAndPassword;
+        //assert
+        expect(() async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignUpWithEmailAndPasswordFailure('User is null!')));
+        verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+      },
+    );
+    test(
+      'should throw SignUpWithEmailAndPasswordFailure with a proper message when FirebaseAuthException occurs',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenThrow(FirebaseAuthException(code: 'invalid-email'));
+
+        //act
+        final result = authRemoteDatasourceImpl.signupWithEmailAndPassword;
+        //assert
+        expect(
+            () async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignUpWithEmailAndPasswordFailure(
+                'Email is not valid or badly formatted.')));
+        verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(() => mockUserCredential.user);
+      },
+    );
+
+    test(
+      'should throw SignUpWithEmailAndPasswordFailure when a general exception occurs',
+      () async {
+        //arrange
+        when(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'))).thenThrow(Exception());
+
+        //act
+        final result = authRemoteDatasourceImpl.signupWithEmailAndPassword;
+        //assert
+        expect(() async => await result(email: tEmail, password: tPassword),
+            throwsA(const SignUpWithEmailAndPasswordFailure()));
+        verify(() => mockFirebaseAuth.createUserWithEmailAndPassword(
+            email: tEmail, password: tPassword)).called(1);
+        verifyNever(() => mockUserCredential.user);
+      },
+    );
+  });
+//TODO: refactor when calls into functions and clean the code
 }
