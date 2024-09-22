@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/usecase/usecase.dart';
@@ -18,13 +19,16 @@ class SignupUser implements UseCase<AppUser, SignupUserParams> {
   }
 }
 
-class SignupUserParams {
+class SignupUserParams extends Equatable {
   final String name;
   final String email;
   final String password;
-  SignupUserParams({
+  const SignupUserParams({
     required this.name,
     required this.email,
     required this.password,
   });
+
+  @override
+  List<Object?> get props => [name, email, password];
 }

@@ -34,8 +34,8 @@ void main() {
           ))).thenAnswer((_) async => const Right(tAppUser));
 
       //act
-      final result = await usecase(
-          SignupUserParams(name: tName, email: tEmail, password: tPassword));
+      final result = await usecase(const SignupUserParams(
+          name: tName, email: tEmail, password: tPassword));
 
       //assert
       verify(() => mockAuthRepository.signUpWithEmailAndPassword(
@@ -56,8 +56,8 @@ void main() {
           .thenAnswer((_) async => const Left(Failure()));
 
       //act
-      final result = await usecase(
-          SignupUserParams(name: tName, email: tEmail, password: tPassword));
+      final result = await usecase(const SignupUserParams(
+          name: tName, email: tEmail, password: tPassword));
 
       //assert
       verify(() => mockAuthRepository.signUpWithEmailAndPassword(

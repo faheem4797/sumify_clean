@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/usecase/usecase.dart';
@@ -12,8 +13,11 @@ class ForgotPassword implements UseCase<String, ForgotPasswordParams> {
   }
 }
 
-class ForgotPasswordParams {
+class ForgotPasswordParams extends Equatable {
   final String email;
 
-  ForgotPasswordParams({required this.email});
+  const ForgotPasswordParams({required this.email});
+
+  @override
+  List<Object?> get props => [email];
 }

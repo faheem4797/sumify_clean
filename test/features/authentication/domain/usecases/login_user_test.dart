@@ -30,8 +30,8 @@ void main() {
           .thenAnswer((_) async => const Right(tAppUser));
 
       //act
-      final result =
-          await usecase(LoginUserParams(email: tEmail, password: tPassword));
+      final result = await usecase(
+          const LoginUserParams(email: tEmail, password: tPassword));
 
       //assert
       verify(() => mockAuthRepository.loginWithEmailAndPassword(
@@ -50,8 +50,8 @@ void main() {
           .thenAnswer((_) async => const Left(Failure()));
 
       //act
-      final result =
-          await usecase(LoginUserParams(email: tEmail, password: tPassword));
+      final result = await usecase(
+          const LoginUserParams(email: tEmail, password: tPassword));
 
       //assert
       verify(() => mockAuthRepository.loginWithEmailAndPassword(

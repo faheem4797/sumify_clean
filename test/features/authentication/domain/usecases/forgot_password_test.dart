@@ -28,7 +28,7 @@ void main() {
           .thenAnswer((_) async => const Right(tSuccess));
 
       //act
-      final result = await usecase(ForgotPasswordParams(email: tEmail));
+      final result = await usecase(const ForgotPasswordParams(email: tEmail));
 
       //assert
       verify(() => mockAuthRepository.forgotUserPassword(email: tEmail))
@@ -47,7 +47,7 @@ void main() {
           .thenAnswer((_) async => const Left(Failure()));
 
       //act
-      final result = await usecase(ForgotPasswordParams(email: tEmail));
+      final result = await usecase(const ForgotPasswordParams(email: tEmail));
 
       //assert
       verify(() => mockAuthRepository.forgotUserPassword(email: tEmail))
