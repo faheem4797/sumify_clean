@@ -11,6 +11,9 @@ void main() {
   setUp(() {
     signInBloc = SignInBloc();
   });
+  tearDown(() {
+    signInBloc.close();
+  });
 
   const String tValidEmail = 'test@example.com';
   const String tInvalidEmail = 'invalid-email';
@@ -37,7 +40,28 @@ void main() {
 
   group('SignInEmailChanged', () {
     blocTest<SignInBloc, SignInState>(
-      'emits updated state with valid email and isValid = true when email is valid and password is valid',
+      'emits updated state with valid email when email is valid',
+      build: () => signInBloc,
+      act: (bloc) => bloc.add(const SignInEmailChanged(email: tValidEmail)),
+      expect: () => const <SignInState>[
+        SignInState(
+          email: Email.dirty(tValidEmail),
+        ),
+      ],
+    );
+    blocTest<SignInBloc, SignInState>(
+      'emits updated state with invalid email and isValid = false when email is invalid',
+      build: () => signInBloc,
+      act: (bloc) => bloc.add(const SignInEmailChanged(email: tInvalidEmail)),
+      expect: () => const <SignInState>[
+        SignInState(
+          email: Email.dirty(tInvalidEmail),
+          isValid: false,
+        ),
+      ],
+    );
+    blocTest<SignInBloc, SignInState>(
+      'emits updated state with valid email but isValid = true when valid seed is provided',
       build: () => signInBloc,
       seed: () => const SignInState(password: Password.dirty(tValidPassword)),
       act: (bloc) => bloc.add(const SignInEmailChanged(email: tValidEmail)),
@@ -46,38 +70,6 @@ void main() {
           email: Email.dirty(tValidEmail),
           password: Password.dirty(tValidPassword),
           isValid: true,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
-        ),
-      ],
-    );
-    blocTest<SignInBloc, SignInState>(
-      'emits updated state with invalid email and isValid = false when email is invalid',
-      build: () => signInBloc,
-      seed: () => const SignInState(password: Password.dirty(tValidPassword)),
-      act: (bloc) => bloc.add(const SignInEmailChanged(email: tInvalidEmail)),
-      expect: () => const <SignInState>[
-        SignInState(
-          email: Email.dirty(tInvalidEmail),
-          password: Password.dirty(tValidPassword),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
-        ),
-      ],
-    );
-    blocTest<SignInBloc, SignInState>(
-      'emits updated state with valid email but isValid = false when password is invalid',
-      build: () => signInBloc,
-      seed: () => const SignInState(password: Password.dirty(tInvalidPassword)),
-      act: (bloc) => bloc.add(const SignInEmailChanged(email: tValidEmail)),
-      expect: () => const <SignInState>[
-        SignInState(
-          email: Email.dirty(tValidEmail),
-          password: Password.dirty(tInvalidPassword),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
         ),
       ],
     );
@@ -85,7 +77,30 @@ void main() {
 
   group('SignInPasswordChanged', () {
     blocTest<SignInBloc, SignInState>(
-      'emits updated state with valid password and isValid = true when password and email is valid',
+      'emits updated state with valid password when SignInPasswordChanged is added',
+      build: () => signInBloc,
+      act: (bloc) =>
+          bloc.add(const SignInPasswordChanged(password: tValidPassword)),
+      expect: () => const <SignInState>[
+        SignInState(
+          password: Password.dirty(tValidPassword),
+        ),
+      ],
+    );
+    blocTest<SignInBloc, SignInState>(
+      'emits updated state with invalid password and isValid as false when password is empty',
+      build: () => signInBloc,
+      act: (bloc) =>
+          bloc.add(const SignInPasswordChanged(password: tInvalidPassword)),
+      expect: () => const <SignInState>[
+        SignInState(
+          password: Password.dirty(tInvalidPassword),
+          isValid: false,
+        ),
+      ],
+    );
+    blocTest<SignInBloc, SignInState>(
+      'emits updated state with valid password and isValid = true when valid password is added valid seed is provided',
       build: () => signInBloc,
       seed: () => const SignInState(email: Email.dirty(tValidEmail)),
       act: (bloc) =>
@@ -95,40 +110,6 @@ void main() {
           email: Email.dirty(tValidEmail),
           password: Password.dirty(tValidPassword),
           isValid: true,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
-        ),
-      ],
-    );
-    blocTest<SignInBloc, SignInState>(
-      'emits updated state with invalid password and isValid = false when password is invalid',
-      build: () => signInBloc,
-      seed: () => const SignInState(email: Email.dirty(tValidEmail)),
-      act: (bloc) =>
-          bloc.add(const SignInPasswordChanged(password: tInvalidPassword)),
-      expect: () => const <SignInState>[
-        SignInState(
-          email: Email.dirty(tValidEmail),
-          password: Password.dirty(tInvalidPassword),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
-        ),
-      ],
-    );
-    blocTest<SignInBloc, SignInState>(
-      'emits updated state with valid password but isValid = false when email is invalid',
-      build: () => signInBloc,
-      seed: () => const SignInState(email: Email.dirty(tInvalidEmail)),
-      act: (bloc) =>
-          bloc.add(const SignInPasswordChanged(password: tValidPassword)),
-      expect: () => const <SignInState>[
-        SignInState(
-          email: Email.dirty(tInvalidEmail),
-          password: Password.dirty(tValidPassword),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
-          passwordObscured: true,
         ),
       ],
     );
@@ -142,10 +123,6 @@ void main() {
       act: (bloc) => bloc.add(SignInPasswordObscurePressed()),
       expect: () => const <SignInState>[
         SignInState(
-          email: Email.pure(),
-          password: Password.pure(),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
           passwordObscured: false,
         )
       ],
@@ -157,10 +134,6 @@ void main() {
       act: (bloc) => bloc.add(SignInPasswordObscurePressed()),
       expect: () => const <SignInState>[
         SignInState(
-          email: Email.pure(),
-          password: Password.pure(),
-          isValid: false,
-          status: FormzSubmissionStatus.initial,
           passwordObscured: true,
         )
       ],
@@ -189,9 +162,10 @@ void main() {
       'emits updated state with valid email & invalid password and isValid = false when button is pressed',
       build: () => signInBloc,
       seed: () => const SignInState(
-        //Have to use pure fields here because otherwise bloc will not consider it as a new state because both states are same
-        email: Email.pure(tValidEmail),
-        password: Password.pure(tInvalidPassword),
+        email: Email.dirty(tValidEmail),
+        password: Password.dirty(tInvalidPassword),
+        isValid:
+            true, //Have to use isValid as true here because otherwise bloc will not consider it as a new state because both states are same
       ),
       act: (bloc) => bloc.add(SignInButtonPressed()),
       expect: () => const <SignInState>[
@@ -206,9 +180,10 @@ void main() {
       'emits updated state with invalid email & valid password and isValid = false when button is pressed',
       build: () => signInBloc,
       seed: () => const SignInState(
-        //Have to use pure fields here because otherwise bloc will not consider it as a new state because both states are same
-        email: Email.pure(tInvalidEmail),
-        password: Password.pure(tValidPassword),
+        email: Email.dirty(tInvalidEmail),
+        password: Password.dirty(tValidPassword),
+        isValid:
+            true, //Have to use isValid as true here because otherwise bloc will not consider it as a new state because both states are same
       ),
       act: (bloc) => bloc.add(SignInButtonPressed()),
       expect: () => const <SignInState>[

@@ -10,6 +10,9 @@ void main() {
   setUp(() {
     forgotPasswordBloc = ForgotPasswordBloc();
   });
+  tearDown(() {
+    forgotPasswordBloc.close();
+  });
 
   const String tValidEmail = 'test@example.com';
   const String tInvalidEmail = 'invalid-email';
@@ -17,8 +20,6 @@ void main() {
   test(
     'should return initial state when ForgotPasswordBloc is initialized',
     () async {
-      //arrange
-
       //act
       const expectedState = ForgotPasswordState(
         email: Email.pure(),
@@ -27,14 +28,13 @@ void main() {
       );
 
       //assert
-
       expect(forgotPasswordBloc.state, expectedState);
     },
   );
 
   group('ForgotPasswordEmailChanged', () {
     blocTest<ForgotPasswordBloc, ForgotPasswordState>(
-      'emits updated state with valid email and isValid = true when a valid email is provided',
+      'emits updated state with valid email and isValid = true when email is valid',
       build: () => forgotPasswordBloc,
       act: (bloc) =>
           bloc.add(const ForgotPasswordEmailChanged(email: tValidEmail)),
@@ -47,7 +47,7 @@ void main() {
     );
 
     blocTest<ForgotPasswordBloc, ForgotPasswordState>(
-      'emits updated state with invalid email and isValid = false when an invalid email is provided',
+      'emits updated state with invalid email and isValid = false when email is invalid',
       build: () => forgotPasswordBloc,
       act: (bloc) =>
           bloc.add(const ForgotPasswordEmailChanged(email: tInvalidEmail)),

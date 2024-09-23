@@ -52,6 +52,10 @@ void main() {
     registerFallbackValue(FakeForgotPasswordParams());
   });
 
+  tearDown(() {
+    authBloc.close();
+  });
+
   const String tId = '123';
   const String tName = 'test user';
   const String tEmail = 'test@example.com';
