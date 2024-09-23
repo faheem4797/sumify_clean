@@ -10,7 +10,7 @@ final class SignUpState extends Equatable {
     this.isValid = false,
     this.passwordObscured = true,
     this.confirmPasswordObscured = true,
-    this.errorMessage,
+    // this.errorMessage,
   });
 
   final FullName fullName;
@@ -21,7 +21,7 @@ final class SignUpState extends Equatable {
   final bool isValid;
   final bool passwordObscured;
   final bool confirmPasswordObscured;
-  final String? errorMessage;
+  // final String? errorMessage;
 
   @override
   List<Object?> get props => [
@@ -33,7 +33,7 @@ final class SignUpState extends Equatable {
         isValid,
         passwordObscured,
         confirmPasswordObscured,
-        errorMessage
+        // errorMessage
       ];
 
   SignUpState copyWith({
@@ -45,7 +45,7 @@ final class SignUpState extends Equatable {
     bool? isValid,
     bool? passwordObscured,
     bool? confirmPasswordObscured,
-    String? errorMessage,
+    // String? errorMessage,
   }) {
     return SignUpState(
       fullName: fullName ?? this.fullName,
@@ -57,7 +57,7 @@ final class SignUpState extends Equatable {
       passwordObscured: passwordObscured ?? this.passwordObscured,
       confirmPasswordObscured:
           confirmPasswordObscured ?? this.confirmPasswordObscured,
-      errorMessage: errorMessage ?? this.errorMessage,
+      // errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }
