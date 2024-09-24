@@ -62,8 +62,11 @@ class Constants {
   static const nullUserErrorMessage = 'User not logged in';
   static const userDataNotFoundErrorMessage = 'User data not found';
   static const userIsNullErrorMessage = 'User is null!';
+  static const deleteAccountWrongEmailErrorMessage = 'Wrong Email!';
 
   //SUCCESS TEXTS
   static const passwordResetSuccessMessage =
       'Password reset email sent successfully';
+
+  static const accountDeleteSuccessMessage = 'Account Deleted Successfully!';
 }

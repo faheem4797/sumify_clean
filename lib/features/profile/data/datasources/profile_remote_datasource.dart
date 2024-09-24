@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
-import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
 
 abstract interface class ProfileRemoteDataSource {
@@ -88,9 +87,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       await firebaseAuth.signOut();
       return 'Success';
     } on FirebaseException catch (e) {
-      throw ServerException(e.code);
+      throw SignOutFailure(e.message ?? e.code);
     } catch (e) {
-      throw ServerException(e.toString());
+      throw const SignOutFailure();
     }
   }
 
