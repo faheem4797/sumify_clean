@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/secrets/app_secrets.dart';
 import 'package:sumify_clean/features/contact_us/data/models/contact_us_model.dart';
@@ -36,13 +37,48 @@ class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
       );
       debugPrint(response.body);
       debugPrint(response.statusCode.toString());
-      if (response.statusCode == 200) {
-        return 'Email Sent Successfully';
-      } else {
-        throw const ServerException('Unexpected Error Occured!');
+      switch (response.statusCode) {
+        case 200:
+          return Constants.contactUsEmailSentSuccessMessage;
+
+        case 400:
+          throw const ServerException(Constants.badRequestFailureMessage);
+
+        case 401:
+          throw const ServerException(
+              Constants.unAuthorizedRequestFailureMessage);
+
+        case 403:
+          throw const ServerException(Constants.forbiddenRequestFailureMessage);
+
+        case 404:
+          throw const ServerException(Constants.notFoundFailureMessage);
+
+        case 408:
+          throw const ServerException(Constants.requestTimeoutFailureMessage);
+
+        case 429:
+          throw const ServerException(Constants.tooManyRequestsFailureMessage);
+
+        case 500:
+          throw const ServerException(
+              Constants.internalServerErrorFailureMessage);
+
+        case 502:
+          throw const ServerException(Constants.badGatewayFailureMessage);
+
+        case 503:
+          throw const ServerException(
+              Constants.serviceUnAvailableFailureMessage);
+
+        case 504:
+          throw const ServerException(Constants.gatewayTimeoutFailureMessage);
+
+        default:
+          throw const ServerException();
       }
-    } catch (e) {
-      throw ServerException(e.toString());
+    } catch (_) {
+      throw const ServerException();
     }
   }
 }

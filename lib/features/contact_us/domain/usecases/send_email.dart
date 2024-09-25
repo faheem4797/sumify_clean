@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/usecase/usecase.dart';
@@ -18,15 +19,18 @@ class SendEmail implements UseCase<String, SendEmailParams> {
   }
 }
 
-class SendEmailParams {
+class SendEmailParams extends Equatable {
   final String firstName;
   final String lastName;
   final String email;
   final String message;
 
-  SendEmailParams(
+  const SendEmailParams(
       {required this.firstName,
       required this.lastName,
       required this.email,
       required this.message});
+
+  @override
+  List<Object?> get props => [firstName, lastName, email, message];
 }

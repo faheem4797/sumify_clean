@@ -66,10 +66,31 @@ class Constants {
   static const retryAfterLoggingInErrorMessage =
       'Please retry after logging in again';
   static const userMatchNotFoundErrorMessage = 'User did not match';
+  static const badRequestFailureMessage =
+      'Bad Request: The server could not understand the request.';
+  static const unAuthorizedRequestFailureMessage =
+      'Unauthorized: Invalid authentication credentials.';
+  static const forbiddenRequestFailureMessage =
+      'Forbidden: You do not have access to perform this action.';
+  static const notFoundFailureMessage =
+      'Not Found: The requested resource could not be found.';
+  static const requestTimeoutFailureMessage =
+      'Request Timeout: The server timed out waiting for the request.';
+  static const tooManyRequestsFailureMessage =
+      'Too Many Requests: You have sent too many requests in a short amount of time.';
+  static const internalServerErrorFailureMessage =
+      'Internal Server Error: Something went wrong on the server.';
+  static const badGatewayFailureMessage =
+      'Bad Gateway: The server received an invalid response from the upstream server.';
+  static const serviceUnAvailableFailureMessage =
+      'Service Unavailable: The server is temporarily unable to handle the request.';
+  static const gatewayTimeoutFailureMessage =
+      'Gateway Timeout: The server did not receive a timely response from the upstream server.';
 
   //SUCCESS TEXTS
   static const passwordResetSuccessMessage =
       'Password reset email sent successfully';
+  static const contactUsEmailSentSuccessMessage = 'Email Sent Successfully';
   static const accountDeleteSuccessMessage = 'Account Deleted Successfully!';
   static const userSignOutSuccessMessage = 'Success';
 }

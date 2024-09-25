@@ -38,8 +38,8 @@ class ContactUsRepositoryImpl implements ContactUsRepository {
       return right(response);
     } on ServerException catch (e) {
       return left(Failure(e.message));
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 }
