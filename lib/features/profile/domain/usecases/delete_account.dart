@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/domain/entities/app_user.dart';
 import 'package:sumify_clean/core/error/failure.dart';
@@ -18,11 +19,14 @@ class DeleteAccount implements UseCase<String, DeleteAccountParams> {
   }
 }
 
-class DeleteAccountParams {
+class DeleteAccountParams extends Equatable {
   final String email;
   final String password;
   final AppUser appUser;
 
-  DeleteAccountParams(
+  const DeleteAccountParams(
       {required this.email, required this.password, required this.appUser});
+
+  @override
+  List<Object?> get props => [email, password, appUser];
 }

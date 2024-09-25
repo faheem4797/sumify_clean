@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/domain/entities/app_user.dart';
 import 'package:sumify_clean/core/error/failure.dart';
@@ -23,16 +24,20 @@ class ChangeProfilePicture
   }
 }
 
-class ChangeProfilePictureParams {
+class ChangeProfilePictureParams extends Equatable {
   final String userId;
   final String pictureFilePathFromFirebase;
   final File profilePicture;
   final String fileName;
 
-  ChangeProfilePictureParams({
+  const ChangeProfilePictureParams({
     required this.userId,
     required this.pictureFilePathFromFirebase,
     required this.profilePicture,
     required this.fileName,
   });
+
+  @override
+  List<Object?> get props =>
+      [userId, pictureFilePathFromFirebase, profilePicture, fileName];
 }

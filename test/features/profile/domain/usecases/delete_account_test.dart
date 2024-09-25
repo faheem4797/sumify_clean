@@ -39,7 +39,7 @@ void main() {
               appUser: any(named: 'appUser')))
           .thenAnswer((_) async => const Right(tSuccessMessage));
       //act
-      final result = await usecase(DeleteAccountParams(
+      final result = await usecase(const DeleteAccountParams(
           email: tEmail, password: tPassword, appUser: tAppUser));
       //assert
       expect(result, const Right(tSuccessMessage));
@@ -59,7 +59,7 @@ void main() {
               appUser: any(named: 'appUser')))
           .thenAnswer((_) async => const Left(Failure()));
       //act
-      final result = await usecase(DeleteAccountParams(
+      final result = await usecase(const DeleteAccountParams(
           email: tEmail, password: tPassword, appUser: tAppUser));
       //assert
       expect(result, const Left(Failure()));
