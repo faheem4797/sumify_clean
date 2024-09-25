@@ -13,6 +13,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => FirebaseFirestore.instance);
   serviceLocator.registerLazySingleton(() => FirebaseStorage.instance);
 
+  serviceLocator.registerLazySingleton(() => http.Client());
+
   serviceLocator.registerFactory(() => InternetConnection());
   serviceLocator.registerLazySingleton(() => ImagePicker());
   serviceLocator.registerLazySingleton(() => PermissionsService());
@@ -97,7 +99,7 @@ Future<void> _initProfile() async {
 Future<void> _initContactUs() async {
   serviceLocator
     ..registerFactory<ContactUsRemoteDatasource>(
-        () => ContactUsRemoteDatasourceImpl())
+        () => ContactUsRemoteDatasourceImpl(client: serviceLocator()))
     ..registerFactory<ContactUsRepository>(() => ContactUsRepositoryImpl(
           connectionChecker: serviceLocator(),
           contactUsRemoteDatasource: serviceLocator(),

@@ -12,12 +12,15 @@ abstract interface class ContactUsRemoteDatasource {
 }
 
 class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
+  final http.Client client;
+
+  const ContactUsRemoteDatasourceImpl({required this.client});
   @override
   Future<String> sendContactEmail(
       {required ContactUsModel contactUsModel}) async {
     try {
       final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
-      final response = await http.post(
+      final response = await client.post(
         url,
         headers: {
           'origin': 'http://localhost',
@@ -77,6 +80,8 @@ class ContactUsRemoteDatasourceImpl implements ContactUsRemoteDatasource {
         default:
           throw const ServerException();
       }
+    } on ServerException {
+      rethrow;
     } catch (_) {
       throw const ServerException();
     }

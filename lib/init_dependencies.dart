@@ -40,5 +40,6 @@ import 'package:sumify_clean/features/profile/presentation/blocs/delete_account_
 import 'package:sumify_clean/features/profile/presentation/blocs/edit_profile_image_bloc/edit_profile_image_bloc.dart';
 import 'package:sumify_clean/features/profile/presentation/blocs/logout_bloc/logout_bloc.dart';
 import 'package:sumify_clean/firebase_options.dart';
+import 'package:http/http.dart' as http;
 
 part 'init_dependencies.main.dart';
