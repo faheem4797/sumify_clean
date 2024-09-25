@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/firebase_auth_exceptions.dart';
 import 'package:sumify_clean/core/error/firebase_firestore_exceptions.dart';
 import 'package:sumify_clean/features/authentication/data/models/user_model.dart';
@@ -76,7 +77,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return profileImageUrlDownload;
     } on FirebaseException catch (e) {
       throw FirebaseDataFailure.fromCode(e.code);
-    } catch (e) {
+    } catch (_) {
       throw const FirebaseDataFailure();
     }
   }
@@ -85,7 +86,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<String> signOutUser() async {
     try {
       await firebaseAuth.signOut();
-      return 'Success';
+      return Constants.userSignOutSuccessMessage;
     } on FirebaseException catch (e) {
       throw SignOutFailure(e.message ?? e.code);
     } catch (e) {
@@ -99,13 +100,16 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final userDoc =
           await firebaseFirestore.collection('users').doc(userId).get();
 
-      if (userDoc.data() != null) {
-        return UserModel.fromMap(userDoc.data()!);
+      if ((userDoc.data() == null) ||
+          (userDoc.data()!.isEmpty || (!userDoc.exists))) {
+        throw const FirebaseDataFailure(Constants.userDataNotFoundErrorMessage);
       } else {
-        throw const FirebaseDataFailure();
+        return UserModel.fromMap(userDoc.data()!);
       }
     } on FirebaseException catch (e) {
       throw FirebaseDataFailure.fromCode(e.code);
+    } on FirebaseDataFailure {
+      rethrow;
     } catch (_) {
       throw const FirebaseDataFailure();
     }
@@ -129,14 +133,17 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           await firebaseAuth.signOut();
           return;
         } else {
-          throw const ReauthenticateUserFailure();
+          throw const ReauthenticateUserFailure(
+              Constants.userMatchNotFoundErrorMessage);
         }
       } else {
         throw const ReauthenticateUserFailure(
-            'Please retry after logging in again');
+            Constants.retryAfterLoggingInErrorMessage);
       }
     } on FirebaseException catch (e) {
       throw ReauthenticateUserFailure.fromCode(e.code);
+    } on ReauthenticateUserFailure {
+      rethrow;
     } catch (_) {
       throw const ReauthenticateUserFailure();
     }

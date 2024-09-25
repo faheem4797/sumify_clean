@@ -130,7 +130,7 @@ class SendPasswordResetEmailFailure implements Exception {
   final String message;
 }
 
-class ReauthenticateUserFailure implements Exception {
+class ReauthenticateUserFailure extends Equatable implements Exception {
   /// {@macro send_password_reset_email_failure}
   const ReauthenticateUserFailure([
     this.message = 'An unknown exception occurred.',
@@ -171,4 +171,7 @@ class ReauthenticateUserFailure implements Exception {
 
   /// The associated error message.
   final String message;
+
+  @override
+  List<Object?> get props => [message];
 }
