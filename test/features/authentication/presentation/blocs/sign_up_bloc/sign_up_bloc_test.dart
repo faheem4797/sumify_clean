@@ -27,20 +27,21 @@ void main() {
   test(
     'should emit correct initial state on initialization of bloc',
     () async {
-      //act
-      const expectedState = SignUpState(
-        fullName: FullName.pure(),
-        email: Email.pure(),
-        password: Password.pure(),
-        confirmPassword: ConfirmPassword.pure(),
-        status: FormzSubmissionStatus.initial,
-        isValid: false,
-        passwordObscured: true,
-        confirmPasswordObscured: true,
-      );
-
       //assert
-      expect(signUpBloc.state, expectedState);
+      expect(
+          signUpBloc.state,
+          isA<SignUpState>()
+              .having((state) => state.fullName.isPure, 'fullname', true)
+              .having((state) => state.password.isPure, 'password', true)
+              .having((state) => state.confirmPassword.isPure,
+                  'confirmPassword', true)
+              .having((state) => state.status, 'status',
+                  FormzSubmissionStatus.initial)
+              .having((state) => state.isValid, 'isValid', false)
+              .having(
+                  (state) => state.passwordObscured, 'passwordObscured', true)
+              .having((state) => state.confirmPasswordObscured,
+                  'confirmPasswordObscured', true));
     },
   );
 

@@ -20,15 +20,14 @@ void main() {
   test(
     'should return initial state when ForgotPasswordBloc is initialized',
     () async {
-      //act
-      const expectedState = ForgotPasswordState(
-        email: Email.pure(),
-        status: FormzSubmissionStatus.initial,
-        isValid: false,
-      );
-
       //assert
-      expect(forgotPasswordBloc.state, expectedState);
+      expect(
+          forgotPasswordBloc.state,
+          isA<ForgotPasswordState>()
+              .having((state) => state.email.isPure, 'email', true)
+              .having((state) => state.status, 'status',
+                  FormzSubmissionStatus.initial)
+              .having((state) => state.isValid, 'isValid', false));
     },
   );
 

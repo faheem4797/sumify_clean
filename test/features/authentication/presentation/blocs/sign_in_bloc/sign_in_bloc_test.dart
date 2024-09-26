@@ -23,18 +23,17 @@ void main() {
   test(
     'should emit correct initial state on initialization of bloc',
     () async {
-      //act
-      const expectedState = SignInState(
-        email: Email.pure(),
-        password: Password.pure(),
-        status: FormzSubmissionStatus.initial,
-        isValid: false,
-        passwordObscured: true,
-      );
-
       //assert
-
-      expect(signInBloc.state, expectedState);
+      expect(
+          signInBloc.state,
+          isA<SignInState>()
+              .having((state) => state.email.isPure, 'email', true)
+              .having((state) => state.password.isPure, 'password', true)
+              .having((state) => state.status, 'status',
+                  FormzSubmissionStatus.initial)
+              .having((state) => state.isValid, 'isValid', false)
+              .having(
+                  (state) => state.passwordObscured, 'passwordObscured', true));
     },
   );
 
