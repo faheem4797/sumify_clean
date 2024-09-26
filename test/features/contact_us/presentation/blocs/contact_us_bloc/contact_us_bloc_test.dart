@@ -249,6 +249,13 @@ void main() {
         message: FullName.dirty(tValidMessage),
       ),
       act: (bloc) => bloc.add(ContactUsSubmitButtonPressed()),
+      verify: (bloc) {
+        verify(() => mockSendEmail(const SendEmailParams(
+            firstName: tValidFirstName,
+            lastName: tValidLastName,
+            email: tValidEmail,
+            message: tValidMessage))).called(1);
+      },
       expect: () => const <ContactUsState>[
         ContactUsState(
           firstName: FullName.dirty(tValidFirstName),
@@ -281,6 +288,7 @@ void main() {
         )
       ],
     );
+
     blocTest<ContactUsBloc, ContactUsState>(
       'emits updated state with valid seed when button is pressed and sendEmail usecase returns a failure',
       build: () => contactUsBloc,
