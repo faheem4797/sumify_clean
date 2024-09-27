@@ -43,7 +43,7 @@ class ArticleRemoteDatasourceImpl implements ArticleRemoteDatasource {
 
       return reply;
     } else {
-      throw Exception('Failed to perform OpenAI Chat Completion');
+      throw const ServerException('Failed to perform OpenAI Chat Completion');
     }
   }
 
@@ -71,8 +71,10 @@ class ArticleRemoteDatasourceImpl implements ArticleRemoteDatasource {
           comments: comments);
 
       return article;
-    } catch (e) {
-      throw ServerException(e.toString());
+    } on ServerException {
+      rethrow;
+    } catch (_) {
+      throw const ServerException();
     }
   }
 }

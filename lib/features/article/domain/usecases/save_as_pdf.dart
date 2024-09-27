@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/usecase/usecase.dart';
@@ -14,9 +15,12 @@ class SaveAsPdf implements UseCase<String, SaveAsPdfParams> {
   }
 }
 
-class SaveAsPdfParams {
+class SaveAsPdfParams extends Equatable {
   final String report;
   final String fileName;
 
-  SaveAsPdfParams({required this.report, required this.fileName});
+  const SaveAsPdfParams({required this.report, required this.fileName});
+
+  @override
+  List<Object?> get props => [report, fileName];
 }

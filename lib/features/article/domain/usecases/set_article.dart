@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/usecase/usecase.dart';
@@ -14,8 +15,11 @@ class SetArticle implements UseCase<Article, SetArticleParams> {
   }
 }
 
-class SetArticleParams {
+class SetArticleParams extends Equatable {
   final String article;
 
-  SetArticleParams({required this.article});
+  const SetArticleParams({required this.article});
+
+  @override
+  List<Object?> get props => [article];
 }

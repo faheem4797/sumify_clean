@@ -24,7 +24,10 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
   FutureOr<void> _setArticleButtonPressed(
       SetArticleButtonPressed event, Emitter<ArticleState> emit) async {
     emit(state.copyWith(status: ArticleStatus.loading));
-    if (state.articleText == '') return;
+    if (state.articleText == '') {
+      emit(state.copyWith(status: ArticleStatus.initial));
+      return;
+    }
     final response =
         await _setArticle(SetArticleParams(article: state.articleText));
     response.fold(
@@ -44,6 +47,10 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
   FutureOr<void> _saveAsPdfButtonPressed(
       SaveAsPdfButtonPressed event, Emitter<ArticleState> emit) async {
     emit(state.copyWith(reportStatus: ReportSaveStatus.loading));
+    if (state.article.report.isEmpty || state.article.title.isEmpty) {
+      emit(state.copyWith(reportStatus: ReportSaveStatus.initial));
+      return;
+    }
     final String title = state.article.title;
     final String filteredtitle = title.replaceAll('"', '');
 
