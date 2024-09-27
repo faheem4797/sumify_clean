@@ -18,6 +18,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerFactory(() => InternetConnection());
   serviceLocator.registerLazySingleton(() => ImagePicker());
   serviceLocator.registerLazySingleton(() => PermissionsService());
+  serviceLocator.registerLazySingleton(
+      () => PermissionRequest(permissionsService: serviceLocator()));
 
   //core
   // serviceLocator
@@ -62,10 +64,13 @@ Future<void> _initArticle() async {
   serviceLocator
     ..registerFactory<ArticleRemoteDatasource>(
         () => ArticleRemoteDatasourceImpl())
+    ..registerFactory<ArticleLocalDatasource>(
+        () => ArticleLocalDatasourceImpl())
     ..registerFactory<ArticleRepository>(() => ArticleRepositoryImpl(
           connectionChecker: serviceLocator(),
           articleRemoteDatasource: serviceLocator(),
-          permissionsService: serviceLocator(),
+          articleLocalDatasource: serviceLocator(),
+          permissionRequest: serviceLocator(),
         ))
     ..registerFactory(() => SaveAsPdf(articleRepository: serviceLocator()))
     ..registerFactory(() => SetArticle(articleRepository: serviceLocator()))

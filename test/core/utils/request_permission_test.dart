@@ -9,8 +9,11 @@ class FakePermission extends Fake implements Permission {}
 
 void main() {
   late MockPermissionsService mockPermissionsService;
+  late PermissionRequest permissionRequest;
   setUp(() {
     mockPermissionsService = MockPermissionsService();
+    permissionRequest =
+        PermissionRequest(permissionsService: mockPermissionsService);
     registerFallbackValue(FakePermission());
   });
 
@@ -37,8 +40,8 @@ void main() {
           .thenAnswer((_) async => PermissionStatus.granted);
 
       // Act
-      final result = await requestPermission(
-          mockPermissionsService, Permission.manageExternalStorage);
+      final result = await permissionRequest
+          .requestPermission(Permission.manageExternalStorage);
 
       // Assert
       verify(() =>
@@ -53,8 +56,9 @@ void main() {
       //arrange
       setUpStatusAsDenied();
       setUpRequestAsGranted();
-      await requestPermission(
-          mockPermissionsService, Permission.manageExternalStorage);
+
+      await permissionRequest
+          .requestPermission(Permission.manageExternalStorage);
 
       // Assert
       verify(() =>
@@ -70,8 +74,8 @@ void main() {
       //arrange
       setUpStatusAsDenied();
       setUpRequestAsGranted();
-      final result = await requestPermission(
-          mockPermissionsService, Permission.manageExternalStorage);
+      final result = await permissionRequest
+          .requestPermission(Permission.manageExternalStorage);
 
       // Assert
       verify(() =>
@@ -91,8 +95,8 @@ void main() {
       when(() => mockPermissionsService.openAppSettings())
           .thenAnswer((_) async => true);
 
-      final result = await requestPermission(
-          mockPermissionsService, Permission.manageExternalStorage);
+      final result = await permissionRequest
+          .requestPermission(Permission.manageExternalStorage);
 
       // Assert
       verify(() =>
@@ -111,8 +115,8 @@ void main() {
     setUpStatusAsDenied();
     when(() => mockPermissionsService.request(any())).thenThrow(Exception());
 
-    final result = await requestPermission(
-        mockPermissionsService, Permission.manageExternalStorage);
+    final result = await permissionRequest
+        .requestPermission(Permission.manageExternalStorage);
 
     //assert
     verify(
@@ -133,8 +137,8 @@ void main() {
     when(() => mockPermissionsService.openAppSettings())
         .thenThrow((_) => Exception());
 
-    final result = await requestPermission(
-        mockPermissionsService, Permission.manageExternalStorage);
+    final result = await permissionRequest
+        .requestPermission(Permission.manageExternalStorage);
 
     //assert
     verify(

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:sumify_clean/features/article/domain/entities/article.dart';
 
 class ArticleModel extends Article {
-  ArticleModel({
+  const ArticleModel({
     required super.article,
     required super.title,
     required super.summary,

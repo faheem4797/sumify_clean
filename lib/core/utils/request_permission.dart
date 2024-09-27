@@ -21,30 +21,38 @@ class PermissionsService {
   }
 }
 
-Future<bool> requestPermission(
-    PermissionsService permissionsService, Permission permission) async {
-  if (await permissionsService.status(permission) == PermissionStatus.granted) {
-    // debugPrint('granted');
-    return true;
-  } else {
-    // debugPrint(' not granted');
-    try {
-      var result = await permissionsService.request(permission);
-      // debugPrint(' requested');
-      if (result == PermissionStatus.granted) {
-        // debugPrint(' granted now');
-        return true;
-      } else {
-        await permissionsService.openAppSettings();
-        // debugPrint(' not granted bruh');
+class PermissionRequest {
+  final PermissionsService permissionsService;
+
+  PermissionRequest({required this.permissionsService});
+
+  Future<bool> requestPermission(Permission permission) async {
+    if (await permissionsService.status(permission) ==
+        PermissionStatus.granted) {
+      // debugPrint('granted');
+      return true;
+    } else {
+      // debugPrint(' not granted');
+      try {
+        var result = await permissionsService.request(permission);
+        // debugPrint(' requested');
+        if (result == PermissionStatus.granted) {
+          // debugPrint(' granted now');
+          return true;
+        } else {
+          await permissionsService.openAppSettings();
+          // debugPrint(' not granted bruh');
+          return false;
+        }
+      } catch (e) {
+        // debugPrint(e.toString());
         return false;
       }
-    } catch (e) {
-      // debugPrint(e.toString());
-      return false;
     }
   }
 }
+
+
 
 // Future<bool> requestPermission(Permission permission) async {
 //   if (await permission.isGranted) {

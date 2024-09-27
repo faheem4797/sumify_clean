@@ -1,4 +1,6 @@
-class Article {
+import 'package:equatable/equatable.dart';
+
+class Article extends Equatable {
   final String article;
   final String title;
   final String summary;
@@ -14,4 +16,7 @@ class Article {
 
   static const empty =
       Article(article: '', title: '', summary: '', report: '', comments: []);
+
+  @override
+  List<Object?> get props => [article, title, summary, report, comments];
 }

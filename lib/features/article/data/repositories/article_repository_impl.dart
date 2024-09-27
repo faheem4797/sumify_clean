@@ -1,31 +1,29 @@
-import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
+import 'package:sumify_clean/core/utils/generate_pdf.dart';
 import 'package:sumify_clean/core/utils/request_permission.dart';
+import 'package:sumify_clean/features/article/data/datasources/article_local_datasource.dart';
 import 'package:sumify_clean/features/article/data/datasources/article_remote_datasource.dart';
 import 'package:sumify_clean/features/article/domain/entities/article.dart';
 import 'package:sumify_clean/features/article/domain/repositories/article_repository.dart';
-import 'package:external_path/external_path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ArticleRepositoryImpl implements ArticleRepository {
   final ConnectionChecker connectionChecker;
   final ArticleRemoteDatasource articleRemoteDatasource;
-  final PermissionsService permissionsService;
+  final ArticleLocalDatasource articleLocalDatasource;
+  final PermissionRequest permissionRequest;
 
   ArticleRepositoryImpl({
     required this.connectionChecker,
     required this.articleRemoteDatasource,
-    required this.permissionsService,
+    required this.articleLocalDatasource,
+    required this.permissionRequest,
   });
 
   @override
@@ -40,8 +38,8 @@ class ArticleRepositoryImpl implements ArticleRepository {
       return right(articleModel);
     } on ServerException catch (e) {
       return left(Failure(e.message));
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 
@@ -49,24 +47,14 @@ class ArticleRepositoryImpl implements ArticleRepository {
   Future<Either<Failure, String>> saveAsPdf(
       {required String report, required String fileName}) async {
     try {
-      final permissionChecker = await requestPermission(
-          permissionsService, Permission.manageExternalStorage);
+      final permissionChecker = await permissionRequest
+          .requestPermission(Permission.manageExternalStorage);
 
       if (permissionChecker) {
-        final PdfDocument document = PdfDocument();
-        PdfPage page = document.pages.add();
-
-        document.pageSettings.size = PdfPageSize.a4;
-
-        PdfFont font = PdfStandardFont(PdfFontFamily.timesRoman, 18);
-
-        PdfTextElement(text: report, font: font).draw(
-            page: page,
-            bounds: Rect.fromLTWH(
-                0, 0, page.getClientSize().width, page.getClientSize().height));
+        final document = await generatePdf(report);
         int randomNumber = Random().nextInt(100) + 100;
 
-        final message = await saveDocument(
+        final message = await articleLocalDatasource.saveDocument(
             name: '$fileName$randomNumber.pdf', pdf: document);
         if (message == 'Success') {
           return right('Successfully saved as pdf.');
@@ -78,47 +66,6 @@ class ArticleRepositoryImpl implements ArticleRepository {
       }
     } catch (e) {
       return left(Failure(e.toString()));
-    }
-  }
-
-  Future<String> saveDocument({
-    required String name,
-    required PdfDocument pdf,
-  }) async {
-    try {
-      // pdf save to the variable called bytes
-      final bytes = await pdf.save();
-
-      if (Platform.isAndroid) {
-        final dir = await ExternalPath.getExternalStoragePublicDirectory(
-            ExternalPath.DIRECTORY_DOCUMENTS);
-
-        // final dir = await getApplicationDocumentsDirectory();
-
-        debugPrint(dir);
-        debugPrint('$dir/$name');
-
-        final file = await File('$dir/$name').create(recursive: true);
-
-        debugPrint(file.existsSync().toString());
-
-        debugPrint('asdasd');
-        await file.writeAsBytes(bytes);
-
-        return 'Success';
-      }
-      //FOR IOS
-      else {
-        var dir = await getApplicationDocumentsDirectory();
-        debugPrint(dir.path);
-        final file = File('${dir.path}/$name');
-        await file.writeAsBytes(bytes);
-
-        // reterning the file to the top most method which generates centered text.
-        return 'Success';
-      }
-    } catch (e) {
-      throw Exception(e.toString());
     }
   }
 }
