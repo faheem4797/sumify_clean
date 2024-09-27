@@ -32,6 +32,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerFactory<ConnectionChecker>(
       () => ConnectionCheckerImpl(serviceLocator()));
 
+  serviceLocator.registerLazySingleton(() => Random());
+
   await _initAuth();
   await _initArticle();
   await _initProfile();
@@ -71,6 +73,7 @@ Future<void> _initArticle() async {
           articleRemoteDatasource: serviceLocator(),
           articleLocalDatasource: serviceLocator(),
           permissionRequest: serviceLocator(),
+          random: serviceLocator(),
         ))
     ..registerFactory(() => SaveAsPdf(articleRepository: serviceLocator()))
     ..registerFactory(() => SetArticle(articleRepository: serviceLocator()))

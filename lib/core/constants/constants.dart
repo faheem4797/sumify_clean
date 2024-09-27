@@ -86,6 +86,8 @@ class Constants {
       'Service Unavailable: The server is temporarily unable to handle the request.';
   static const gatewayTimeoutFailureMessage =
       'Gateway Timeout: The server did not receive a timely response from the upstream server.';
+  static const permissionDeniedFailureMessage = 'Permission denied!';
+  static const saveAsPdfFailureMessage = 'Failed to save report as pdf';
 
   //SUCCESS TEXTS
   static const passwordResetSuccessMessage =
@@ -93,4 +95,6 @@ class Constants {
   static const contactUsEmailSentSuccessMessage = 'Email Sent Successfully';
   static const accountDeleteSuccessMessage = 'Account Deleted Successfully!';
   static const userSignOutSuccessMessage = 'Success';
+  static const savedAsPDFsuccessMessage = 'Successfully saved as pdf.';
+  static const saveDocumentSuccessMessage = 'Success';
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 abstract interface class ArticleLocalDatasource {
@@ -35,7 +36,7 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
         debugPrint('asdasd');
         await file.writeAsBytes(bytes);
 
-        return 'Success';
+        return Constants.saveDocumentSuccessMessage;
       }
       //FOR IOS
       else {
@@ -45,7 +46,7 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
         await file.writeAsBytes(bytes);
 
         // reterning the file to the top most method which generates centered text.
-        return 'Success';
+        return Constants.saveDocumentSuccessMessage;
       }
     } catch (e) {
       throw Exception(e.toString());

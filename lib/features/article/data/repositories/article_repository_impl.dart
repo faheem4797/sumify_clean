@@ -18,13 +18,14 @@ class ArticleRepositoryImpl implements ArticleRepository {
   final ArticleRemoteDatasource articleRemoteDatasource;
   final ArticleLocalDatasource articleLocalDatasource;
   final PermissionRequest permissionRequest;
+  final Random random;
 
-  ArticleRepositoryImpl({
-    required this.connectionChecker,
-    required this.articleRemoteDatasource,
-    required this.articleLocalDatasource,
-    required this.permissionRequest,
-  });
+  ArticleRepositoryImpl(
+      {required this.connectionChecker,
+      required this.articleRemoteDatasource,
+      required this.articleLocalDatasource,
+      required this.permissionRequest,
+      required this.random});
 
   @override
   Future<Either<Failure, Article>> setArticle({required String article}) async {
@@ -52,20 +53,20 @@ class ArticleRepositoryImpl implements ArticleRepository {
 
       if (permissionChecker) {
         final document = await generatePdf(report);
-        int randomNumber = Random().nextInt(100) + 100;
+        int randomNumber = random.nextInt(100) + 100;
 
         final message = await articleLocalDatasource.saveDocument(
             name: '$fileName$randomNumber.pdf', pdf: document);
-        if (message == 'Success') {
-          return right('Successfully saved as pdf.');
+        if (message == Constants.saveDocumentSuccessMessage) {
+          return right(Constants.savedAsPDFsuccessMessage);
         } else {
-          return left(const Failure());
+          return left(const Failure(Constants.saveAsPdfFailureMessage));
         }
       } else {
-        return left(const Failure('Permission denied!'));
+        return left(const Failure(Constants.permissionDeniedFailureMessage));
       }
-    } catch (e) {
-      return left(Failure(e.toString()));
+    } catch (_) {
+      return left(const Failure());
     }
   }
 }
