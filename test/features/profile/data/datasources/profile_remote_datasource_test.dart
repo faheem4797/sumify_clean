@@ -15,7 +15,7 @@ import 'package:sumify_clean/features/profile/data/datasources/profile_remote_da
 import 'package:file/memory.dart';
 
 //Firebase Storage Mocks package was not working correctly particularly its delete functionality from refFromUrl
-//So in these tests i have mocked firebase storage and other related classes myself and used moctail
+//So in these tests i have mocked firebase storage and other related classes myself and used mocktail
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 

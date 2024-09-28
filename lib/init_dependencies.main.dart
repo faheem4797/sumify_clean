@@ -33,6 +33,10 @@ Future<void> initDependencies() async {
       () => ConnectionCheckerImpl(serviceLocator()));
 
   serviceLocator.registerLazySingleton(() => Random());
+
+  serviceLocator.registerLazySingleton<SaveDocumentService>(
+      () => SaveDocumentServiceImpl());
+
   serviceLocator
       .registerLazySingleton(() => OpenAiService(client: serviceLocator()));
 
@@ -69,7 +73,7 @@ Future<void> _initArticle() async {
     ..registerFactory<ArticleRemoteDatasource>(
         () => ArticleRemoteDatasourceImpl(openAiService: serviceLocator()))
     ..registerFactory<ArticleLocalDatasource>(
-        () => ArticleLocalDatasourceImpl())
+        () => ArticleLocalDatasourceImpl(saveDocumentService: serviceLocator()))
     ..registerFactory<ArticleRepository>(() => ArticleRepositoryImpl(
           connectionChecker: serviceLocator(),
           articleRemoteDatasource: serviceLocator(),

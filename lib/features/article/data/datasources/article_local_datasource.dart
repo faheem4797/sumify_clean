@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
+import 'package:sumify_clean/core/error/local_file_saving_exception.dart';
+import 'package:sumify_clean/core/utils/save_document_service.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 abstract interface class ArticleLocalDatasource {
@@ -11,6 +12,11 @@ abstract interface class ArticleLocalDatasource {
 }
 
 class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
+  final SaveDocumentService saveDocumentService;
+
+  const ArticleLocalDatasourceImpl({
+    required this.saveDocumentService,
+  });
   @override
   Future<String> saveDocument({
     required String name,
@@ -20,18 +26,23 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
       // pdf save to the variable called bytes
       final bytes = await pdf.save();
 
-      if (Platform.isAndroid) {
-        final dir = await ExternalPath.getExternalStoragePublicDirectory(
-            ExternalPath.DIRECTORY_DOCUMENTS);
+      if (saveDocumentService.isAndroid) {
+        final dir = await saveDocumentService.getExternalDocumentsDirectory;
+        // final dir = await ExternalPath.getExternalStoragePublicDirectory(
+        //     ExternalPath.DIRECTORY_DOCUMENTS);
 
         // final dir = await getApplicationDocumentsDirectory();
 
         debugPrint(dir);
         debugPrint('$dir/$name');
 
-        final file = await File('$dir/$name').create(recursive: true);
+        final file = await saveDocumentService.getFileSystem
+            .file('$dir/$name')
+            .create(recursive: true);
 
-        debugPrint(file.existsSync().toString());
+        // final file = await File('$dir/$name').create(recursive: true);
+
+        // debugPrint(file.existsSync().toString());
 
         debugPrint('asdasd');
         await file.writeAsBytes(bytes);
@@ -40,16 +51,24 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
       }
       //FOR IOS
       else {
-        var dir = await getApplicationDocumentsDirectory();
+        final dir = await saveDocumentService.getAppsDocumentsDirectory;
+        // var dir = await getApplicationDocumentsDirectory();
         debugPrint(dir.path);
-        final file = File('${dir.path}/$name');
+        final file =
+            saveDocumentService.getFileSystem.file('${dir.path}/$name');
         await file.writeAsBytes(bytes);
 
         // reterning the file to the top most method which generates centered text.
         return Constants.saveDocumentSuccessMessage;
       }
-    } catch (e) {
-      throw Exception(e.toString());
+    } on LocalFileSavingException {
+      rethrow;
+    } on MissingPlatformDirectoryException catch (e) {
+      throw LocalFileSavingException(e.message);
+    } on FileSystemException catch (e) {
+      throw LocalFileSavingException(e.message);
+    } catch (_) {
+      throw const LocalFileSavingException();
     }
   }
 }
