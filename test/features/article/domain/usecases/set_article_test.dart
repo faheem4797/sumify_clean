@@ -39,7 +39,8 @@ void main() {
           .thenAnswer((_) async => const Right(tArticle));
 
       //act
-      final result = await setArticle(SetArticleParams(article: tArticleText));
+      final result =
+          await setArticle(const SetArticleParams(article: tArticleText));
 
       //assert
       expect(result, const Right(tArticle));
@@ -58,7 +59,8 @@ void main() {
           .thenAnswer((_) async => const Left(Failure()));
 
       //act
-      final result = await setArticle(SetArticleParams(article: tArticleText));
+      final result =
+          await setArticle(const SetArticleParams(article: tArticleText));
 
       //assert
       expect(result, const Left(Failure()));

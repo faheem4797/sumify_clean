@@ -88,6 +88,8 @@ class Constants {
       'Gateway Timeout: The server did not receive a timely response from the upstream server.';
   static const permissionDeniedFailureMessage = 'Permission denied!';
   static const saveAsPdfFailureMessage = 'Failed to save report as pdf';
+  static const openAiServerExceptionFailureMessage =
+      'Failed to perform OpenAI Chat Completion';
 
   //SUCCESS TEXTS
   static const passwordResetSuccessMessage =

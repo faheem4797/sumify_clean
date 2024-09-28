@@ -54,10 +54,10 @@ void main() {
     message: tMessage,
   );
 
-  test('''should perform a POST request on a URL with number 
+  test('''should perform a POST request on a URL 
         being the endpoint and with application/json headers''', () async {
     setUpMockHttpClientSuccess200();
-    contactUsRemoteDatasourceImpl.sendContactEmail(
+    await contactUsRemoteDatasourceImpl.sendContactEmail(
         contactUsModel: tContactUsModel);
     verify(
       (() => mockHttpClient.post(

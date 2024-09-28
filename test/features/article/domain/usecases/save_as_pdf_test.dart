@@ -31,7 +31,7 @@ void main() {
 
       //act
       final result = await saveAsPdf(
-          SaveAsPdfParams(report: tReport, fileName: tFileName));
+          const SaveAsPdfParams(report: tReport, fileName: tFileName));
 
       //assert
       expect(result, const Right(tSuccessMessage));
@@ -51,7 +51,7 @@ void main() {
 
       //act
       final result = await saveAsPdf(
-          SaveAsPdfParams(report: tReport, fileName: tFileName));
+          const SaveAsPdfParams(report: tReport, fileName: tFileName));
 
       //assert
       expect(result, const Left(Failure()));
