@@ -33,6 +33,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           } else if (state is AuthInitial && state.message != null) {
             showSnackBar(context, state.message!);
             Future.delayed(const Duration(seconds: 2), () {
+              if (!context.mounted) return;
               context.pop();
             });
           }

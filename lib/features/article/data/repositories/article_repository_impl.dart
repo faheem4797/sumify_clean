@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sumify_clean/core/constants/constants.dart';
 import 'package:sumify_clean/core/error/failure.dart';
+import 'package:sumify_clean/core/error/local_file_saving_exception.dart';
 import 'package:sumify_clean/core/error/server_exception.dart';
 import 'package:sumify_clean/core/network/connection_checker.dart';
 import 'package:sumify_clean/core/utils/generate_pdf.dart';
@@ -65,6 +66,8 @@ class ArticleRepositoryImpl implements ArticleRepository {
       } else {
         return left(const Failure(Constants.permissionDeniedFailureMessage));
       }
+    } on LocalFileSavingException catch (e) {
+      return left(Failure(e.message));
     } catch (_) {
       return left(const Failure());
     }

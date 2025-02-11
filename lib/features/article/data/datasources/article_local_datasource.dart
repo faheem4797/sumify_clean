@@ -27,27 +27,35 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
       final bytes = await pdf.save();
 
       if (saveDocumentService.isAndroid) {
-        final dir = await saveDocumentService.getExternalDocumentsDirectory;
+        // final dir = await saveDocumentService.getExternalDownloadDirectory;
         // final dir = await ExternalPath.getExternalStoragePublicDirectory(
         //     ExternalPath.DIRECTORY_DOCUMENTS);
 
         // final dir = await getApplicationDocumentsDirectory();
+        debugPrint('vigi1111');
+//TODO: THIS IS CAUSING ISSUES. ISSUE IS FROM PACKAGE
+        String? saveFilePath =
+            await saveDocumentService.getSaveFileExternalPath(name);
+        debugPrint('vigi000');
 
-        debugPrint(dir);
-        debugPrint('$dir/$name');
+        if (saveFilePath == null) {
+          throw LocalFileSavingException('No Directory Selected');
+        } else {
+          debugPrint(saveFilePath);
+          debugPrint("oioioi1");
+          final file = await saveDocumentService.getFileSystem
+              .file(saveFilePath)
+              .create(recursive: true);
 
-        final file = await saveDocumentService.getFileSystem
-            .file('$dir/$name')
-            .create(recursive: true);
+          // final file = await File('$dir/$name').create(recursive: true);
 
-        // final file = await File('$dir/$name').create(recursive: true);
+          // debugPrint(file.existsSync().toString());
 
-        // debugPrint(file.existsSync().toString());
+          debugPrint('asdasd');
+          await file.writeAsBytes(bytes);
 
-        debugPrint('asdasd');
-        await file.writeAsBytes(bytes);
-
-        return Constants.saveDocumentSuccessMessage;
+          return Constants.saveDocumentSuccessMessage;
+        }
       }
       //FOR IOS
       else {
@@ -64,11 +72,22 @@ class ArticleLocalDatasourceImpl implements ArticleLocalDatasource {
     } on LocalFileSavingException {
       rethrow;
     } on MissingPlatformDirectoryException catch (e) {
+      debugPrint('1');
+
+      debugPrint(e.message);
       throw LocalFileSavingException(e.message);
     } on FileSystemException catch (e) {
+      debugPrint('2');
+
+      debugPrint(e.message);
+
       throw LocalFileSavingException(e.message);
-    } catch (_) {
-      throw const LocalFileSavingException();
+    } catch (e) {
+      debugPrint('3');
+
+      debugPrint(e.toString());
+
+      throw LocalFileSavingException();
     }
   }
 }
